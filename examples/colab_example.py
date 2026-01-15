@@ -10,7 +10,7 @@ or any Jupyter notebook environment.
 # !pip install hoodini-colab
 
 # Step 2: Import and create launcher
-from hoodini_launcher import create_launcher
+from hoodini_colab import create_launcher
 
 # Step 3: Display the interactive widget
 launcher = create_launcher()

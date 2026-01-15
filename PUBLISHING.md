@@ -56,8 +56,8 @@ python -m build
 ```
 
 This creates:
-- `dist/hoodini_launcher-X.Y.Z.tar.gz` (source distribution)
-- `dist/hoodini_launcher-X.Y.Z-py3-none-any.whl` (wheel)
+- `dist/hoodini_colab-X.Y.Z.tar.gz` (source distribution)
+- `dist/hoodini_colab-X.Y.Z-py3-none-any.whl` (wheel)
 
 ### 5. Check Package
 
@@ -98,7 +98,7 @@ Go to GitHub and create a release from the tag with CHANGELOG notes.
 Verify installation:
 ```bash
 pip install hoodini-colab
-python -c "from hoodini_launcher import create_launcher; print('✅ Success')"
+python -c "from hoodini_colab import create_launcher; print('✅ Success')"
 ```
 
 ## Troubleshooting
@@ -119,11 +119,11 @@ python -c "from hoodini_launcher import create_launcher; print('✅ Success')"
 
 ```bash
 # Check what's in the package
-tar -tzf dist/hoodini_launcher-0.1.0.tar.gz | head -20
+tar -tzf dist/hoodini_colab-0.1.0.tar.gz | head -20
 
 # Check wheel contents
-unzip -l dist/hoodini_launcher-0.1.0-py3-none-any.whl
+unzip -l dist/hoodini_colab-0.1.0-py3-none-any.whl
 
 # Install from local wheel
-pip install dist/hoodini_launcher-0.1.0-py3-none-any.whl
+pip install dist/hoodini_colab-0.1.0-py3-none-any.whl
 ```

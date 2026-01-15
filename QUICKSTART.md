@@ -9,7 +9,7 @@ pip install hoodini-colab
 ## Basic Usage
 
 ```python
-from hoodini_launcher import create_launcher
+from hoodini_colab import create_launcher
 
 launcher = create_launcher()
 display(launcher)
@@ -53,7 +53,7 @@ make all-checks
 
 ## Project Structure
 
-- `src/hoodini_launcher/` - Main package source
+- `src/hoodini_colab/` - Main package source
   - `__init__.py` - Package exports
   - `widget.py` - Python widget class
   - `widget.js` - JavaScript frontend (46KB)

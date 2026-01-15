@@ -35,10 +35,10 @@ Once you know your GitHub username and repository name, update the Colab badge U
 
 1. **README.md** (line 7 and line 13):
    ```markdown
-   [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YOUR_USERNAME/hoodini-colab/blob/main/hoodini_launcher.ipynb)
+   [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YOUR_USERNAME/hoodini-colab/blob/main/hoodini_colab.ipynb)
    ```
 
-2. **hoodini_launcher.ipynb** (first cell):
+2. **hoodini_colab.ipynb** (first cell):
    Same badge URL as above
 
 Replace `YOUR_USERNAME` with your actual GitHub username.
@@ -54,7 +54,7 @@ Replace `YOUR_USERNAME` with your actual GitHub username.
 
 If your repository is at `https://github.com/john/hoodini-colab`, the Colab URL would be:
 ```
-https://colab.research.google.com/github/john/hoodini-colab/blob/main/hoodini_launcher.ipynb
+https://colab.research.google.com/github/john/hoodini-colab/blob/main/hoodini_colab.ipynb
 ```
 
 ## Notes

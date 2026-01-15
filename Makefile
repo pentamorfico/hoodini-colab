@@ -33,7 +33,7 @@ test:  ## Run tests
 	pytest
 
 test-cov:  ## Run tests with coverage
-	pytest --cov=hoodini_launcher --cov-report=html --cov-report=term
+	pytest --cov=hoodini_colab --cov-report=html --cov-report=term
 
 build:  ## Build package
 	python -m build

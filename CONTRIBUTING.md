@@ -41,10 +41,10 @@ Thank you for your interest in contributing to hoodini-colab! 🎉
 4. Test your changes
    ```bash
    # Import test
-   python -c "from hoodini_launcher import create_launcher"
+   python -c "from hoodini_colab import create_launcher"
    
    # Test in a notebook
-   jupyter notebook hoodini_launcher.ipynb
+   jupyter notebook hoodini_colab.ipynb
    ```
 
 5. Commit your changes
@@ -86,7 +86,7 @@ ruff check src/
 
 ```
 hoodini-colab/
-├── src/hoodini_launcher/    # Main package
+├── src/hoodini_colab/    # Main package
 │   ├── __init__.py           # Package exports
 │   ├── widget.py             # Widget class and logic
 │   ├── widget.js             # Frontend JavaScript

@@ -42,8 +42,8 @@ dev = [
 
 [project.urls]
 Homepage = "https://hoodini.bio"
-Documentation = "https://github.com/hoodini/hoodini-launcher"
-Repository = "https://github.com/hoodini/hoodini-launcher"
+Documentation = "https://github.com/pentamorfico/hoodini-colab"
+Repository = "https://github.com/pentamorfico/hoodini-colab"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/hoodini_colab"]

@@ -42,11 +42,11 @@ def create_launcher() -> HoodiniLauncher:
         HoodiniLauncher: Configured launcher widget ready to be displayed.
 
     Example:
-        >>> from hoodini_launcher import create_launcher
+        >>> from hoodini_colab import create_launcher
         >>> launcher = create_launcher()
         >>> display(launcher)
     """
-    from hoodini_launcher.utils import (
+    from hoodini_colab.utils import (
         check_hoodini_installed,
         check_launcher_packages,
         install_hoodini,

@@ -1,4 +1,4 @@
-# <img src="assets/images/hoodini_logo.svg" alt="Hoodini Logo" height="40" align="center"> hoodini-colab [![PyPI](https://img.shields.io/pypi/v/hoodini-colab)](https://pypi.org/project/hoodini-colab/) [![Python](https://img.shields.io/pypi/pyversions/hoodini-colab)](https://pypi.org/project/hoodini-colab/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hoodini/hoodini-colab/blob/main/hoodini_launcher.ipynb)
+# <img src="assets/images/hoodini_logo.svg" alt="Hoodini Logo" height="40" align="center"> hoodini-colab [![PyPI](https://img.shields.io/pypi/v/hoodini-colab)](https://pypi.org/project/hoodini-colab/) [![Python](https://img.shields.io/pypi/pyversions/hoodini-colab)](https://pypi.org/project/hoodini-colab/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hoodini/hoodini-colab/blob/main/hoodini_colab.ipynb)
 
 Interactive parameter configurator for the Hoodini CLI genomic neighborhood analysis tool.
 
@@ -38,14 +38,14 @@ The development installation includes additional tools like ruff for linting and
 
 The fastest way to try hoodini-colab is through Google Colab, where you don't need to install anything on your computer. Just click the badge below and the notebook will open in your browser:
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hoodini/hoodini-colab/blob/main/hoodini_launcher.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hoodini/hoodini-colab/blob/main/hoodini_colab.ipynb)
 
 Once the notebook opens, run the cells in order. The first cell installs the package, and the second cell displays the interactive launcher widget where you can start configuring your analysis immediately.
 
 If you're working in a local Jupyter notebook, the setup is equally simple:
 
 ```python
-from hoodini_launcher import create_launcher
+from hoodini_colab import create_launcher
 
 launcher = create_launcher()
 display(launcher)
@@ -58,7 +58,7 @@ The widget will check for required dependencies and install Hoodini automaticall
 If you need more control over the widget behavior, you can work with the HoodiniLauncher class directly. This allows you to programmatically access the generated command, monitor the execution status, or integrate the widget into more complex workflows:
 
 ```python
-from hoodini_launcher import HoodiniLauncher
+from hoodini_colab import HoodiniLauncher
 
 launcher = HoodiniLauncher()
 
@@ -102,12 +102,12 @@ pip install -e ".[dev]"
 
 The project uses ruff for fast Python linting and formatting. You can check code style with `ruff check src/` and automatically format code with `ruff format src/`. Type checking is handled by mypy, which you can run with `mypy src/`.
 
-The project structure follows modern Python packaging conventions with a `src/` layout. All package code lives in `src/hoodini_launcher/`, which includes the main widget class, utility functions for installation, and the JavaScript frontend code. Configuration is handled through `pyproject.toml` using the Hatchling build backend.
+The project structure follows modern Python packaging conventions with a `src/` layout. All package code lives in `src/hoodini_colab/`, which includes the main widget class, utility functions for installation, and the JavaScript frontend code. Configuration is handled through `pyproject.toml` using the Hatchling build backend.
 
 ```
 hoodini-colab/
 ├── src/
-│   └── hoodini_launcher/
+│   └── hoodini_colab/
 │       ├── __init__.py
 │       ├── widget.py          # Main widget class
 │       ├── widget.js          # Frontend JavaScript
