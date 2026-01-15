@@ -8,41 +8,33 @@ function render({ model, el }) {
     const params = {
         'Input/Output': [
             { name: 'input', type: 'text', label: 'Input', desc: 'Protein ID, FASTA, or file path', modes: ['single', 'list'] },
-            { name: 'output', type: 'text', label: 'Output Folder', desc: 'Output folder name', def: 'hoodini_output' },
-            { name: 'force', type: 'bool', label: 'Force Overwrite', desc: 'Force re-download and overwrite existing files', def: true },
-            { name: 'keep', type: 'bool', label: 'Keep Temp Files', desc: 'Keep temporary files (do not delete)' },
-            { name: 'assembly-folder', type: 'text', label: 'Assembly Folder', desc: 'Path to a local assembly folder' },
-            { name: 'blast', type: 'text', label: 'BLAST Query File', desc: 'BLAST query file to use' }
+            { name: 'output', type: 'text', label: 'Output Folder', desc: 'Output folder name', def: 'results' },
+            { name: 'force', type: 'switch', label: 'Force Overwrite', desc: 'Force re-download and overwrite existing files', def: false },
+            
         ],
         'Remote BLAST': [
-            { name: 'remote-evalue', type: 'float', label: 'E-value', desc: 'Remote BLAST E-value', modes: ['single'] },
-            { name: 'remote-max-targets', type: 'int', label: 'Max Targets', desc: 'Max targets to retrieve', modes: ['single'] }
-        ],
-        'Performance': [
-            { name: 'max-concurrent-downloads', type: 'int', label: 'Max Concurrent Downloads', desc: 'Maximum concurrent downloads' },
-            { name: 'num-threads', type: 'int', label: 'Threads', desc: 'Number of threads' },
-            { name: 'api-key', type: 'text', label: 'NCBI API Key', desc: 'NCBI API key' }
+            { name: 'remote-evalue', type: 'float', label: 'E-value', desc: 'Remote BLAST E-value', modes: ['single'], def: 1e-5 },
+            { name: 'remote-max-targets', type: 'int', label: 'Max Targets', desc: 'Max targets to retrieve', modes: ['single'], def: 100 }
         ],
         'Neighborhood Window': [
-            { name: 'win-mode', type: 'select', label: 'Window Mode', desc: 'Window mode', options: ['win_nts', 'win_genes'] },
-            { name: 'win', type: 'int', label: 'Window Size', desc: 'Window size' },
-            { name: 'min-win', type: 'int', label: 'Min Window', desc: 'Min window size' },
-            { name: 'min-win-type', type: 'select', label: 'Min Window Type', desc: 'Type of min window', options: ['total', 'upstream', 'downstream', 'both'] }
+            { name: 'win-mode', type: 'select', label: 'Window Mode', desc: 'Window mode', options: ['win_nts', 'win_genes'], def: 'win_nts' },
+            { name: 'win', type: 'int', label: 'Window Size', desc: 'Window size', def: 20000 },
+            { name: 'min-win', type: 'int', label: 'Min Window', desc: 'Min window size', def: 2000 },
+            { name: 'min-win-type', type: 'select', label: 'Min Window Type', desc: 'Type of min window', options: ['total', 'upstream', 'downstream', 'both'], def: 'both' }
         ],
         'Clustering': [
-            { name: 'cand-mode', type: 'select', label: 'Candidate Mode', desc: 'IPG representative mode', options: ['any_ipg', 'best_ipg', 'best_id', 'one_id', 'same_id'] },
-            { name: 'clust-method', type: 'select', label: 'Clustering Method', desc: 'Clustering method', options: ['diamond_deepclust', 'deepmmseqs', 'jackhmmer', 'blastp'] }
+            { name: 'cand-mode', type: 'select', label: 'Candidate Mode', desc: 'IPG representative mode', options: ['any_ipg', 'best_ipg', 'best_id', 'one_id', 'same_id'], def: 'best_id' },
+            { name: 'clust-method', type: 'select', label: 'Clustering Method', desc: 'Clustering method', options: ['diamond_deepclust', 'deepmmseqs', 'jackhmmer', 'blastp'], def: 'diamond_deepclust' }
         ],
         'Tree Construction': [
-            { name: 'tree-mode', type: 'select', label: 'Tree Mode', desc: 'Tree building method', options: ['taxonomy', 'fast_nj', 'aai_tree', 'ani_tree', 'fast_ml', 'use_input_tree', 'foldmason_tree', 'neigh_similarity_tree', 'neigh_phylo_tree'] },
-            { name: 'tree-file', type: 'text', label: 'Tree File', desc: 'Path to the tree file' }
+            { name: 'tree-mode', type: 'select', label: 'Tree Mode', desc: 'Tree building method', options: ['taxonomy', 'fast_nj', 'aai_tree', 'ani_tree', 'fast_ml', 'neigh_similarity_tree', 'neigh_phylo_tree'], def: 'fast_ml' }
         ],
         'Pairwise Comparisons': [
-            { name: 'ani-mode', type: 'select', label: 'ANI Mode', desc: 'ANI calculation method', options: ['skani', 'blastn'] },
-            { name: 'nt-aln-mode', type: 'select', label: 'NT Alignment', desc: 'Nucleotide alignment mode', options: ['blastn', 'fastani', 'minimap2', 'intergenic_blastn'] },
-            { name: 'aai-mode', type: 'select', label: 'AAI Mode', desc: 'AAI/proteome similarity mode', options: ['wgrr', 'aai', 'hyper', 'all'] },
-            { name: 'aai-subset-mode', type: 'select', label: 'AAI Subset', desc: 'AAI subset mode', options: ['target_prot', 'target_region', 'window'] },
-            { name: 'min-pident', type: 'float', label: 'Min % Identity', desc: 'Min percent identity' }
+            { name: 'ani-mode', type: 'select', label: 'ANI Mode', desc: 'ANI calculation method', options: ['fastani', 'skani', 'blastn'], def: 'fastani' },
+            { name: 'nt-aln-mode', type: 'select', label: 'NT Alignment', desc: 'Nucleotide alignment mode', options: ['blastn', 'fastani', 'minimap2'], def: 'blastn' },
+            { name: 'aai-mode', type: 'select', label: 'AAI Mode', desc: 'AAI/proteome similarity mode', options: ['aai', 'wgrr'], def: 'wgrr' },
+            { name: 'aai-subset-mode', type: 'select', label: 'AAI Subset', desc: 'AAI subset mode', options: ['target_prot', 'target_region', 'window'], def: 'target_region' },
+            { name: 'min-pident', type: 'float', label: 'Min % Identity', desc: 'Min percent identity', def: 30.0 }
         ],
         'Annotations': [
             { name: 'padloc', type: 'bool', label: 'PADLOC', desc: 'Antiphage defense' },
@@ -56,35 +48,34 @@ function render({ model, el }) {
               options: ['amrfinder', 'cazy', 'cog', 'foam', 'gvdb', 'kegg', 'kofam', 'methmmdb', 'nfixdb', 'pfam', 'pgap', 'phrog', 'pvog', 'tigrfam', 'vog-r225'] }
         ],
         'Links': [
-            { name: 'prot-links', type: 'switch', label: 'Protein Links', desc: 'Pairwise protein comparisons' },
-            { name: 'nt-links', type: 'switch', label: 'Nucleotide Links', desc: 'Pairwise nucleotide comparisons' }
-        ],
-        'Logging': [
-            { name: 'quiet', type: 'bool', label: 'Quiet Mode', desc: 'Silence all non-error output' },
-            { name: 'debug', type: 'bool', label: 'Debug Mode', desc: 'Enable verbose debug logging' }
+            { name: 'prot-links', type: 'switch', label: 'Protein Links', desc: 'Pairwise protein comparisons', def: false },
+            { name: 'nt-links', type: 'switch', label: 'Nucleotide Links', desc: 'Pairwise nucleotide comparisons', def: false }
         ]
     };
 
     const state = {};
     const multiSelectState = {}; // For multiselect values
     const sheetData = []; // Table data for inputsheet mode
+    const sheetColumns = ['protein_id', 'nucleotide_id', 'start', 'end', 'strand', 'uniprot_id', 'assembly_id'];
+    let sheetTable = null; // Tabulator instance
     
     Object.values(params).flat().forEach(p => {
-        if (p.def !== undefined) state[p.name] = p.def;
         if (p.type === 'multiselect') multiSelectState[p.name] = [];
     });
+
+    // Using simple HTML table instead of external library
+
+    // --- DEBUG PANEL ---
 
     const categoryStyles = {
         'Remote BLAST': { bg: '#ede9fe', text: '#6d28d9' },
         'Input/Output': { bg: '#e0e7ff', text: '#4338ca' },
-        'Performance': { bg: '#dcfce7', text: '#166534' },
         'Neighborhood Window': { bg: '#fef3c7', text: '#b45309' },
         'Clustering': { bg: '#fce7f3', text: '#be185d' },
         'Tree Construction': { bg: '#ccfbf1', text: '#0f766e' },
         'Pairwise Comparisons': { bg: '#ffedd5', text: '#c2410c' },
         'Annotations': { bg: '#f3f4f6', text: '#374151' },
-        'Links': { bg: '#f3f4f6', text: '#374151' },
-        'Logging': { bg: '#fef2f2', text: '#991b1b' }
+        'Links': { bg: '#f3f4f6', text: '#374151' }
     };
 
     // Icons
@@ -98,13 +89,14 @@ function render({ model, el }) {
         alert: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
         terminal: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>',
         dna: '<svg width="24" height="24" viewBox="0 0 145.7 150.8" fill="currentColor"><circle cx="43.2" cy="29.7" r="13.1"/><circle cx="104.7" cy="30.7" r="13.1"/><path d="M68.9,49.4c-0.1,14-7.7,30.3-27.5,30.2S14.3,63,14.3,49.1s7.6-30.3,27.5-30.2S69,35.4,68.9,49.4z M60.3,49.4 c0-10.7-4.9-22.9-18.5-23S22.9,38.4,22.9,49.1s4.9,22.9,18.6,23S60.1,60.1,60.3,49.4z"/><path d="M132,49.9c-0.1,14-7.7,30.3-27.5,30.2S77.3,63.5,77.4,49.5s7.6-30.3,27.5-30.2S132.1,35.9,132,49.9z M123.3,49.8c0.1-10.7-4.8-22.9-18.5-23C91.2,26.8,86,38.9,85.9,49.6s4.9,22.9,18.6,23S123.3,60.5,123.3,49.8z"/><path d="M60.6,61.8l10,20.5c0.8,1.6,3.5,1.7,4.3,0l9.2-21c0.6-1.2,0.3-2.6-0.9-3.4c-1.2-0.7-2.7-0.3-3.4,0.9l-9.2,21 h4.3l-10-20.6c-0.7-1.2-2.2-1.6-3.4-0.9C60.4,59.1,60,60.6,60.6,61.8L60.6,61.8z"/><polygon points="121.1,84.1 113.3,84.1 113.3,122.1 74.4,122.1 74.4,115 99.6,115 99.6,84.1 91.6,84.1 91.6,107 44.7,107 44.7,102.9 56.1,102.9 56.1,84.1 47.9,84.1 47.9,94.7 32,94.7 32,84.1 23.7,84.1 23.7,102.9 36.7,102.9 36.7,115 66.5,115 66.5,130 92.4,130 92.4,150.8 100.4,150.8 100.4,130 121.1,130"/><path d="M60,33.2h9.9c-0.7-6-4-11.3-9-14.7c-5.6-4-12.6-5.1-19.4-5.2C35,13.1,28.3,14,21.8,12.7 C16.3,11.5,10,7.9,9.8,1.5c0-0.5-0.1-1-0.3-1.5H0.3C0.1,0.5,0,1,0,1.5c0.1,6.8,3.7,12.5,9.2,16.4c5.6,4,12.6,5.1,19.4,5.3 c6.5,0.2,13.2-0.7,19.7,0.6C53.2,24.9,58.9,27.9,60,33.2z"/><path d="M145.4,0h-9.3c-0.2,0.5-0.3,1-0.3,1.5c0,5.7-5.4,9.4-10.4,10.8c-6.9,1.9-14.2,0.8-21.2,1 c-6.7,0.2-13.8,1.3-19.4,5.2c-5,3.4-8.3,8.7-9,14.7h10c1-4.7,5.6-7.8,10.1-9c6.9-1.8,14.2-0.8,21.2-1c6.7-0.2,13.8-1.3,19.4-5.3 c5.4-3.9,9.1-9.6,9.2-16.4C145.6,1,145.5,0.5,145.4,0z"/></svg>',
+        colab: '<svg width="24" height="24" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false"><g><path d="M4.54,9.46,2.19,7.1a6.93,6.93,0,0,0,0,9.79l2.36-2.36A3.59,3.59,0,0,1,4.54,9.46Z" fill="#E8710A"></path><path d="M2.19,7.1,4.54,9.46a3.59,3.59,0,0,1,5.08,0l1.71-2.93h0l-.1-.08h0A6.93,6.93,0,0,0,2.19,7.1Z" fill="#F9AB00"></path><path d="M11.34,17.46h0L9.62,14.54a3.59,3.59,0,0,1-5.08,0L2.19,16.9a6.93,6.93,0,0,0,9,.65l.11-.09" fill="#F9AB00"></path><path d="M12,7.1a6.93,6.93,0,0,0,0,9.79l2.36-2.36a3.59,3.59,0,1,1,5.08-5.08L21.81,7.1A6.93,6.93,0,0,0,12,7.1Z" fill="#F9AB00"></path><path d="M21.81,7.1,19.46,9.46a3.59,3.59,0,0,1-5.08,5.08L12,16.9A6.93,6.93,0,0,0,21.81,7.1Z" fill="#E8710A"></path></g></svg>',
         x: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
         plus: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
         trash: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>',
         spinner: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spinner-icon"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>'
     };
-
     // --- LOGIC ---
+
     function buildCommand() {
         let cmd = 'hoodini run';
         
@@ -138,6 +130,7 @@ function render({ model, el }) {
                 return;
             }
             
+            // Only include if explicitly set by user (not from default)
             if (value === undefined || value === '' || value === null) return;
             
             if (typeof value === 'boolean') {
@@ -147,6 +140,8 @@ function render({ model, el }) {
                 cmd += ' --' + key + ' ' + valStr;
             }
         });
+        // Enforce Google Colab default threads: always use 2 and hide control
+        cmd += ' --num-threads 2';
         return cmd;
     }
 
@@ -201,8 +196,8 @@ function render({ model, el }) {
                 const descEl = inputContainer.querySelector('.param-desc');
                 if (descEl) {
                     descEl.textContent = currentMode === 'list' 
-                        ? 'List of protein IDs, FASTA files, or file paths (one per line)'
-                        : 'Protein ID, FASTA, or file path';
+                        ? 'List of NCBI/Uniprot protein IDs, or NCBI Nucleotide IDs'
+                        : 'NCBI protein ID';
                 }
                 
                 // Find the actual input element
@@ -218,7 +213,7 @@ function render({ model, el }) {
                         newInput = document.createElement('input');
                         newInput.className = 'param-input';
                         newInput.type = 'text';
-                        newInput.placeholder = 'Enter protein ID, FASTA, or file path';
+                        newInput.placeholder = 'Enter NCBI protein ID';
                     }
                     newInput.value = state.input || '';
                     newInput.onchange = function() {
@@ -238,7 +233,9 @@ function render({ model, el }) {
 
         const sheetTable = el.querySelector('.sheet-table-container');
         if (sheetTable) {
-            sheetTable.style.display = (currentMode === 'sheet') ? 'block' : 'none';
+            const show = (currentMode === 'sheet');
+            sheetTable.style.display = show ? 'block' : 'none';
+            if (show) renderSheetTable();
         }
 
         updateCommand();
@@ -257,7 +254,7 @@ function render({ model, el }) {
         
         const input = document.createElement('input');
         input.type = 'checkbox';
-        input.checked = state[param.name] || false;
+        input.checked = (state[param.name] !== undefined) ? state[param.name] : !!param.def;
         input.onchange = () => {
             state[param.name] = input.checked;
             updateCommand();
@@ -414,6 +411,9 @@ function render({ model, el }) {
                     if (state[param.name] === opt) option.selected = true;
                     input.appendChild(option);
                 });
+                if (state[param.name] === undefined && param.def !== undefined) {
+                    input.value = param.def;
+                }
             } else {
                 // Special handling for input field in list mode - use textarea
                 if (param.name === 'input' && currentMode === 'list') {
@@ -428,7 +428,11 @@ function render({ model, el }) {
                     input.type = (param.type === 'int' || param.type === 'float') ? 'number' : 'text';
                     if (param.type === 'float') input.step = '0.001';
                     input.placeholder = param.def !== undefined ? 'Default: ' + param.def : 'Enter ' + param.label.toLowerCase();
-                    if (state[param.name] !== undefined) input.value = state[param.name];
+                    if (state[param.name] !== undefined) {
+                        input.value = state[param.name];
+                    } else if (param.def !== undefined) {
+                        input.value = param.def;
+                    }
                 }
             }
             input.onchange = function() {
@@ -444,70 +448,132 @@ function render({ model, el }) {
         return container;
     }
 
-    // --- SHEET TABLE FUNCTIONS ---
-    const sheetColumns = ['protein_id', 'nucleotide_id', 'start', 'end', 'strand', 'uniprot_id', 'assembly_id'];
-    
     function addSheetRow(data = {}) {
         const row = {};
         sheetColumns.forEach(col => {
             row[col] = data[col] || '';
         });
         sheetData.push(row);
-        renderSheetTable();
+        if (sheetTable) {
+            sheetTable.addRow(row);
+        }
     }
-    
+
     function removeSheetRow(index) {
+        if (sheetTable) {
+            const rows = sheetTable.getRows();
+            if (rows[index]) {
+                rows[index].delete();
+            }
+        }
         sheetData.splice(index, 1);
-        renderSheetTable();
+        updateCommand();
     }
     
-    function renderSheetTable() {
-        const tbody = el.querySelector('.sheet-table tbody');
-        if (!tbody) return;
+    // --- SHEET TABLE FUNCTIONS ---
+    function renderSheetTableUI() {
+        console.log('[Sheet] Rendering simple HTML table');
+        const tableHost = el.querySelector('#sheet-table');
+        if (!tableHost) {
+            console.error('[Sheet] Table host not found');
+            return;
+        }
         
-        tbody.innerHTML = '';
-        sheetData.forEach((row, idx) => {
+        // Clear existing content
+        tableHost.innerHTML = '';
+        
+        // Create table
+        const table = document.createElement('table');
+        table.className = 'sheet-simple-table';
+        
+        // Create header
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        headerRow.className = 'sheet-header-row';
+        
+        sheetColumns.forEach(col => {
+            const th = document.createElement('th');
+            th.textContent = col;
+            th.className = 'sheet-header-cell';
+            headerRow.appendChild(th);
+        });
+        
+        // Add delete column header
+        const thDelete = document.createElement('th');
+        thDelete.textContent = '';
+        thDelete.className = 'sheet-header-cell sheet-delete-col';
+        headerRow.appendChild(thDelete);
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+        
+        // Create body
+        const tbody = document.createElement('tbody');
+        sheetData.forEach((row, rowIdx) => {
             const tr = document.createElement('tr');
+            tr.className = 'sheet-data-row';
+            tr.setAttribute('data-row-idx', rowIdx);
             
             sheetColumns.forEach(col => {
                 const td = document.createElement('td');
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.value = row[col] || '';
-                input.className = 'sheet-cell-input';
-                input.onchange = (e) => {
-                    sheetData[idx][col] = e.target.value;
+                td.className = 'sheet-data-cell';
+                td.setAttribute('data-col', col);
+                td.textContent = row[col] || '';
+                td.contentEditable = true;
+                
+                td.onblur = () => {
+                    const newVal = td.textContent.trim();
+                    if (sheetData[rowIdx]) {
+                        sheetData[rowIdx][col] = newVal;
+                        updateCommand();
+                        console.log('[Sheet] Updated cell [' + rowIdx + '][' + col + ']');
+                    }
                 };
-                td.appendChild(input);
+                
                 tr.appendChild(td);
             });
             
-            const tdAction = document.createElement('td');
-            tdAction.className = 'sheet-action-cell';
+            // Add delete button
+            const tdDelete = document.createElement('td');
+            tdDelete.className = 'sheet-delete-col';
             const btnDelete = document.createElement('button');
-            btnDelete.className = 'btn-icon-small';
+            btnDelete.className = 'sheet-delete-btn';
             btnDelete.innerHTML = icons.trash;
-            btnDelete.onclick = () => removeSheetRow(idx);
-            tdAction.appendChild(btnDelete);
-            tr.appendChild(tdAction);
+            btnDelete.onclick = (e) => {
+                e.stopPropagation();
+                deleteSheetRow(rowIdx);
+            };
+            tdDelete.appendChild(btnDelete);
+            tr.appendChild(tdDelete);
             
             tbody.appendChild(tr);
         });
+        table.appendChild(tbody);
+        
+        tableHost.appendChild(table);
+        console.log('[Sheet] Table rendered with ' + sheetData.length + ' rows');
     }
     
-    function handleSheetPaste(e) {
-        e.preventDefault();
-        const paste = (e.clipboardData || window.clipboardData).getData('text');
-        const rows = paste.split('\\n').filter(r => r.trim());
-        
-        rows.forEach(row => {
-            const values = row.split('\\t');
-            const data = {};
-            sheetColumns.forEach((col, idx) => {
-                if (values[idx]) data[col] = values[idx].trim();
-            });
-            addSheetRow(data);
+    function deleteSheetRow(rowIdx) {
+        console.log('[Sheet] Deleting row:', rowIdx);
+        sheetData.splice(rowIdx, 1);
+        renderSheetTableUI();
+        updateCommand();
+    }
+    
+    function addSheetRow() {
+        console.log('[Sheet] Adding new row');
+        const newRow = {};
+        sheetColumns.forEach(col => {
+            newRow[col] = '';
         });
+        sheetData.push(newRow);
+        renderSheetTableUI();
+        updateCommand();
+    }
+
+    function renderSheetTable() {
+        console.log('[Sheet] renderSheetTable called');
+        renderSheetTableUI();
     }
 
     // --- STYLES ---
@@ -520,8 +586,8 @@ function render({ model, el }) {
     
     '.hoodini-header { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0; }' +
     '.header-top { display: flex; justify-content: space-between; align-items: center; }' +
-    '.hoodini-logo { color: #6366f1; display: flex; align-items: center; gap: 8px; }' +
-    '.hoodini-title { font-size: 20px; font-weight: 700; color: #1e293b; letter-spacing: -0.5px; }' +
+    '.hoodini-logo { color: #333C45; display: flex; align-items: center; gap: 8px; }' +
+    '.hoodini-title { font-size: 20px; font-weight: 700; color: #1e293b; letter-spacing: -0.5px; margin-left: 8px; }' +
     '.hoodini-subtitle { color: #64748b; font-size: 13px; font-weight: 400; }' +
     
     '.mode-switcher { background: #f1f5f9; padding: 4px; border-radius: 8px; display: inline-flex; width: fit-content; }' +
@@ -602,6 +668,18 @@ function render({ model, el }) {
     '.btn-icon-small { background: transparent; border: none; cursor: pointer; padding: 4px; display: inline-flex; align-items: center; color: #64748b; transition: color 0.2s; }' +
     '.btn-icon-small:hover { color: #ef4444; }' +
     '.btn-add-row:hover { background: #4f46e5; }' +
+    '.sheet-simple-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; margin-top: 8px; }' +
+    '.sheet-simple-table thead { background: #2c3e50; color: white; position: sticky; top: 0; z-index: 10; }' +
+    '.sheet-header-row th { padding: 8px 10px; text-align: left; font-weight: 600; white-space: nowrap; border-right: 1px solid #1e293b; }' +
+    '.sheet-header-row th:last-child { border-right: none; }' +
+    '.sheet-data-row { border-bottom: 1px solid #e2e8f0; transition: background 0.15s; }' +
+    '.sheet-data-row:hover { background: #f8fafc; }' +
+    '.sheet-data-cell { padding: 6px 8px; border-right: 1px solid #e2e8f0; cursor: text; outline: none; }' +
+    '.sheet-data-cell:last-of-type { border-right: none; }' +
+    '.sheet-data-cell:focus { background: #fff9e6; outline: 2px solid #6366f1; outline-offset: -2px; }' +
+    '.sheet-delete-col { width: 40px; text-align: center; padding: 6px; border-right: none; }' +
+    '.sheet-delete-btn { background: transparent; border: none; cursor: pointer; color: #94a3b8; display: flex; align-items: center; justify-content: center; transition: color 0.2s; padding: 4px; }' +
+    '.sheet-delete-btn:hover { color: #ef4444; }' +
     '.status-indicator { margin-top: 16px; padding: 12px 16px; border-radius: 8px; display: none; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; }' +
     '.status-indicator.show { display: flex; }' +
     '.status-installing { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }' +
@@ -624,8 +702,13 @@ function render({ model, el }) {
     const topRow = document.createElement('div');
     topRow.className = 'header-top';
     topRow.innerHTML = 
-        '<div><div class="hoodini-logo">' + icons.dna + '<span class="hoodini-title">Hoodini Launcher</span></div>' +
-        '<div class="hoodini-subtitle" style="margin-left: 32px">Magic gene-neighborhood analyses</div></div>' +
+        '<div style="display: flex; flex-direction: column; gap: 8px;">' +
+        '<div style="display: flex; align-items: center;">' +
+        '<div class="hoodini-logo">' + icons.dna + icons.colab + '</div>' +
+        '<span class="hoodini-title">Hoodini Colab Launcher</span>' +
+        '</div>' +
+        '<div class="hoodini-subtitle">Magic gene-neighborhood analyses in Google Colab</div>' +
+        '</div>' +
         '<span class="status-badge status-missing">' + icons.alert + ' Input required</span>';
     
     const modeRow = document.createElement('div');
@@ -664,31 +747,10 @@ function render({ model, el }) {
     
     const tableWrapper = document.createElement('div');
     tableWrapper.className = 'sheet-table-wrapper';
-    
-    const table = document.createElement('table');
-    table.className = 'sheet-table';
-    
-    const thead = document.createElement('thead');
-    const headerRow = document.createElement('tr');
-    sheetColumns.forEach(col => {
-        const th = document.createElement('th');
-        th.textContent = col;
-        headerRow.appendChild(th);
-    });
-    const thAction = document.createElement('th');
-    thAction.textContent = 'Actions';
-    headerRow.appendChild(thAction);
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-    
-    const tbody = document.createElement('tbody');
-    table.appendChild(tbody);
-    
-    tableWrapper.appendChild(table);
+    const tableHost = document.createElement('div');
+    tableHost.id = 'sheet-table';
+    tableWrapper.appendChild(tableHost);
     sheetTableContainer.appendChild(tableWrapper);
-    
-    // Add paste handler
-    tableWrapper.addEventListener('paste', handleSheetPaste);
     
     launcher.appendChild(sheetTableContainer);
 
@@ -885,18 +947,69 @@ function render({ model, el }) {
     };
 
     el.querySelector('#reset-btn').onclick = () => {
+        // Clear all state (leave empty like initial load)
         Object.keys(state).forEach(k => delete state[k]);
         Object.keys(multiSelectState).forEach(k => multiSelectState[k] = []);
-        Object.values(params).flat().forEach(p => {
-            if (p.def !== undefined) state[p.name] = p.def;
+        
+        // Reset all text/number inputs - show defaults but don't set in state
+        el.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(input => {
+            const paramName = input.closest('.param-item')?.querySelector('.param-flag')?.textContent?.replace('--', '');
+            if (paramName) {
+                const param = Object.values(params).flat().find(p => p.name === paramName);
+                // Display default value in input, but don't add to state
+                if (param && param.def !== undefined) {
+                    input.value = param.def;
+                } else {
+                    input.value = '';
+                }
+            } else {
+                input.value = '';
+            }
         });
         
-        el.querySelectorAll('input:not([type="checkbox"]), select').forEach(input => input.value = '');
-        el.querySelectorAll('input[type="checkbox"]').forEach(input => input.checked = false);
+        // Reset all selects - show defaults but don't set in state
+        el.querySelectorAll('select').forEach(select => {
+            const paramName = select.closest('.param-item')?.querySelector('.param-flag')?.textContent?.replace('--', '');
+            if (paramName) {
+                const param = Object.values(params).flat().find(p => p.name === paramName);
+                // Display default value in select, but don't add to state
+                if (param && param.def !== undefined) {
+                    select.value = param.def;
+                } else {
+                    select.value = '';
+                }
+            } else {
+                select.value = '';
+            }
+        });
+        
+        // Reset all switches/checkboxes to their defaults
+        el.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            const switchContainer = checkbox.closest('.switch-container');
+            if (switchContainer) {
+                // This is a switch - check for default value
+                const label = switchContainer.querySelector('.switch-label')?.textContent;
+                if (label) {
+                    const param = Object.values(params).flat().find(p => p.label === label);
+                    const defaultVal = param && param.def !== undefined ? param.def : false;
+                    checkbox.checked = defaultVal;
+                    // Only add to state if default is true
+                    if (defaultVal) {
+                        state[param.name] = defaultVal;
+                    }
+                }
+            } else {
+                // Regular checkbox
+                checkbox.checked = false;
+            }
+        });
+        
+        // Reset multiselect
         el.querySelectorAll('.multiselect-tags').forEach(container => {
             container.innerHTML = '<span class="multiselect-placeholder">Click to select databases...</span>';
         });
 
+        updateVisibility();
         updateCommand();
     };
     
