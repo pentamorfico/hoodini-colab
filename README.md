@@ -78,9 +78,9 @@ display(launcher)
 
 ## Use Cases
 
-**Single Protein Analysis**: When you want to explore the genomic neighborhood of a specific protein, select the "Single Input" mode and enter a protein ID like `WP_000000001.1`. You can configure optional parameters such as remote BLAST e-values or window sizes, then click "Run Hoodini Analysis" to start the process.
+**Single Protein Analysis**: When you want to explore the genomic neighborhood of a specific protein, select the "Single Input" mode and enter an NCBI protein ID like `WP_000000001.1`. Hoodini will use BLAST to automatically find homologous sequences and analyze their genomic neighborhoods. You can configure optional parameters such as remote BLAST e-values or window sizes, then click "Run Hoodini Analysis" to start the process. Note that this mode only works with NCBI protein IDs.
 
-**Batch Analysis**: If you have multiple proteins to analyze with the same parameters, switch to "Input List" mode and paste your protein IDs with one per line. The launcher will process all of them using your configured settings, making it easy to run consistent analyses across many sequences.
+**Custom Homolog List**: If you want to analyze specific sequences rather than letting BLAST choose the homologs automatically, switch to "Input List" mode and provide your own list of sequence IDs with one per line. This gives you complete control over which sequences are included in the analysis. Unlike Single Input mode, you can use both NCBI protein IDs (like `WP_000000001.1`) and nucleotide IDs (like `NZ_CP000001.1`) in this mode. This is particularly useful when you already know which sequences you want to compare or when you want to reproduce specific analyses.
 
 **Custom Coordinates**: For more precise control over exactly which genomic regions to analyze, use "Input Sheet" mode. This lets you specify protein IDs along with their exact nucleotide coordinates, strand information, and assembly IDs in a tabular format. You can either fill in the table manually or paste TSV data directly.
 
