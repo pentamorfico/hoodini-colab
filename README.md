@@ -27,7 +27,7 @@ pip install hoodini-colab
 This will automatically install all required dependencies including anywidget, traitlets, and ipython. If you want to contribute to the development or modify the code, you can install it in editable mode:
 
 ```bash
-git clone https://github.com/hoodini/hoodini-colab.git
+git clone https://github.com/pentamorfico/hoodini-colab.git
 cd hoodini-colab
 pip install -e ".[dev]"
 ```
@@ -95,7 +95,7 @@ Pairwise comparison settings configure ANI and AAI calculations, while annotatio
 Setting up a development environment is straightforward. Clone the repository and install it in editable mode with the dev dependencies:
 
 ```bash
-git clone https://github.com/hoodini/hoodini-colab.git
+git clone https://github.com/pentamorfico/hoodini-colab.git
 cd hoodini-colab
 pip install -e ".[dev]"
 ```
