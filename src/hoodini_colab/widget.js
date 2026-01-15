@@ -162,6 +162,8 @@ function render({ model, el }) {
 
     function updateStatus() {
         const badge = el.querySelector('.status-badge');
+        const runBtn = el.querySelector('#run-btn');
+        
         if (badge) {
             let ready = false;
             if (currentMode === 'single' || currentMode === 'list') {
@@ -173,9 +175,11 @@ function render({ model, el }) {
             if (ready) {
                 badge.className = 'status-badge status-ready';
                 badge.innerHTML = icons.check + ' Ready';
+                if (runBtn) runBtn.disabled = false;
             } else {
                 badge.className = 'status-badge status-missing';
                 badge.innerHTML = icons.alert + ' Input required';
+                if (runBtn) runBtn.disabled = true;
             }
         }
     }
