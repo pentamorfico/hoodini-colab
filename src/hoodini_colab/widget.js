@@ -1168,6 +1168,14 @@ function render({ model, el }) {
         updateLogsVisibility();
     }
 
+    // Heartbeat to keep Colab session active without blocking kernel
+    let heartbeatCounter = 0;
+    setInterval(() => {
+        heartbeatCounter += 1;
+        model.set('heartbeat', heartbeatCounter);
+        model.save_changes();
+    }, 30000); // 30s ping
+
     // Initialize with one empty row for sheet mode
     addSheetRow();
     updateVisibility();

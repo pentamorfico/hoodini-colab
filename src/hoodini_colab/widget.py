@@ -35,6 +35,7 @@ class HoodiniLauncher(anywidget.AnyWidget):
     html_output = traitlets.Unicode("").tag(sync=True)
     input_list = traitlets.Unicode("").tag(sync=True)
     logs = traitlets.Unicode("").tag(sync=True)
+    heartbeat = traitlets.Int(0).tag(sync=True)
 
     def keep_alive(self, interval_seconds: int = 30):
         """Start a background heartbeat to keep Colab alive without blocking UI.
