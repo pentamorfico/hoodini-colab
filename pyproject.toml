@@ -83,6 +83,7 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]  # unused imports
+"src/dev_hoodini_colab.ipynb" = ["E402"]  # dev notebook needs imports after pip install
 
 [tool.ruff.format]
 quote-style = "double"
