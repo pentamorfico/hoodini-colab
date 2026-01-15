@@ -1,4 +1,4 @@
-# <img src="assets/images/hoodini_logo.svg" alt="Hoodini Logo" height="40" align="center"> hoodini-colab [![PyPI](https://img.shields.io/pypi/v/hoodini-colab)](https://pypi.org/project/hoodini-colab/) [![Python](https://img.shields.io/pypi/pyversions/hoodini-colab)](https://pypi.org/project/hoodini-colab/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hoodini/hoodini-colab/blob/main/hoodini_colab.ipynb)
+# <img src="assets/images/hoodini_logo.svg" alt="Hoodini Logo" height="40" align="center"> hoodini-colab [![PyPI](https://img.shields.io/pypi/v/hoodini-colab)](https://pypi.org/project/hoodini-colab/) [![Python](https://img.shields.io/pypi/pyversions/hoodini-colab)](https://pypi.org/project/hoodini-colab/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pentamorfico/hoodini-colab/blob/main/hoodini_colab.ipynb)
 
 Interactive parameter configurator for the Hoodini CLI genomic neighborhood analysis tool.
 
@@ -38,7 +38,7 @@ The development installation includes additional tools like ruff for linting and
 
 The fastest way to try hoodini-colab is through Google Colab, where you don't need to install anything on your computer. Just click the badge below and the notebook will open in your browser:
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hoodini/hoodini-colab/blob/main/hoodini_colab.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pentamorfico/hoodini-colab/blob/main/hoodini_colab.ipynb)
 
 Once the notebook opens, run the cells in order. The first cell installs the package, and the second cell displays the interactive launcher widget where you can start configuring your analysis immediately.
 

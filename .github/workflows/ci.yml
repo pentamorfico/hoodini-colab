@@ -40,7 +40,7 @@ jobs:
           pip install -e .
       - name: Test import
         run: |
-          python -c "from hoodini_launcher import HoodiniLauncher, create_launcher; print('✅ Import successful')"
+          python -c "from hoodini_colab import HoodiniLauncher, create_launcher; print('✅ Import successful')"
 
   build:
     runs-on: ubuntu-latest
