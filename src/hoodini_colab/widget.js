@@ -740,6 +740,11 @@ function render({ model, el }) {
     '.status-finished { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }' +
     '.status-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }' +
     '.spinner-icon { animation: spin 1s linear infinite; }' +
+    '.log-section { margin-top: 16px; background: #0f172a; color: #e2e8f0; border-radius: 8px; border: 1px solid #1e293b; padding: 12px; }' +
+    '.log-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }' +
+    '.log-title { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }' +
+    '.log-content { margin-top: 10px; max-height: 260px; overflow: auto; background: #0b1220; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 12px; white-space: pre-wrap; color: #e2e8f0; border: 1px solid #1e293b; }' +
+    '.btn-sm { padding: 6px 10px; font-size: 12px; }' +
     '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
 
     el.innerHTML = '<style>' + styles + '</style>';
@@ -953,6 +958,17 @@ function render({ model, el }) {
     statusIndicator.className = 'status-indicator';
     statusIndicator.id = 'status-indicator';
     launcher.appendChild(statusIndicator);
+
+    // Logs panel (collapsible)
+    const logsSection = document.createElement('div');
+    logsSection.className = 'log-section';
+    logsSection.innerHTML =
+        '<div class="log-header">' +
+            '<div class="log-title">' + icons.terminal + ' Logs</div>' +
+            '<button id="toggle-logs" class="btn btn-secondary btn-sm">' + icons.chevronRight + ' Show logs</button>' +
+        '</div>' +
+        '<pre id="log-content" class="log-content" style="display:none"></pre>';
+    launcher.appendChild(logsSection);
     
     // HTML Visualization Container
     const htmlVisualizationContainer = document.createElement('div');
@@ -1001,6 +1017,38 @@ function render({ model, el }) {
                 indicator.innerHTML = icons.alert + ' <strong>Error:</strong> ' + message;
             }
         }
+    });
+
+    // Listen for logs and handle collapsible panel
+    const logContentEl = el.querySelector('#log-content');
+    const toggleLogsBtn = el.querySelector('#toggle-logs');
+    let logsOpen = false;
+
+    function updateLogsVisibility() {
+        if (!logContentEl || !toggleLogsBtn) return;
+        logContentEl.style.display = logsOpen ? 'block' : 'none';
+        toggleLogsBtn.innerHTML = (logsOpen ? icons.chevronDown + ' Hide logs' : icons.chevronRight + ' Show logs');
+        if (logsOpen) {
+            logContentEl.scrollTop = logContentEl.scrollHeight;
+        }
+    }
+
+    if (toggleLogsBtn) {
+        toggleLogsBtn.onclick = () => {
+            logsOpen = !logsOpen;
+            updateLogsVisibility();
+        };
+    }
+
+    model.on('change:logs', () => {
+        if (!logContentEl) return;
+        const logs = model.get('logs') || '';
+        logContentEl.textContent = logs;
+        // Auto-open when new logs arrive during a run
+        if (logs && !logsOpen) {
+            logsOpen = true;
+        }
+        updateLogsVisibility();
     });
 
     // Listen for HTML output
@@ -1115,6 +1163,11 @@ function render({ model, el }) {
         updateCommand();
     };
     
+    // Initialize logs panel state
+    if (typeof updateLogsVisibility === 'function') {
+        updateLogsVisibility();
+    }
+
     // Initialize with one empty row for sheet mode
     addSheetRow();
     updateVisibility();
