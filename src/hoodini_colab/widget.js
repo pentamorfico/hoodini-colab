@@ -9,47 +9,59 @@ function render({ model, el }) {
         'Input/Output': [
             { name: 'input', type: 'text', label: 'Input', desc: 'Protein ID, FASTA, or file path', modes: ['single', 'list'] },
             { name: 'output', type: 'text', label: 'Output Folder', desc: 'Output folder name', def: 'hoodini_output' },
-            { name: 'force', type: 'bool', label: 'Force Overwrite', desc: 'Force re-download and overwrite existing files', def: true }
+            { name: 'force', type: 'bool', label: 'Force Overwrite', desc: 'Force re-download and overwrite existing files', def: true },
+            { name: 'keep', type: 'bool', label: 'Keep Temp Files', desc: 'Keep temporary files (do not delete)' },
+            { name: 'assembly-folder', type: 'text', label: 'Assembly Folder', desc: 'Path to a local assembly folder' },
+            { name: 'blast', type: 'text', label: 'BLAST Query File', desc: 'BLAST query file to use' }
         ],
         'Remote BLAST': [
-            { name: 'remote-evalue', type: 'float', label: 'E-value', desc: 'Remote BLAST E-value', def: 0.001, modes: ['single'] },
-            { name: 'remote-max-targets', type: 'int', label: 'Max Targets', desc: 'Max targets to retrieve', def: 100, modes: ['single'] }
+            { name: 'remote-evalue', type: 'float', label: 'E-value', desc: 'Remote BLAST E-value', modes: ['single'] },
+            { name: 'remote-max-targets', type: 'int', label: 'Max Targets', desc: 'Max targets to retrieve', modes: ['single'] }
         ],
         'Performance': [
-            { name: 'num-threads', type: 'int', label: 'Threads', desc: 'Number of threads', def: 4 },
+            { name: 'max-concurrent-downloads', type: 'int', label: 'Max Concurrent Downloads', desc: 'Maximum concurrent downloads' },
+            { name: 'num-threads', type: 'int', label: 'Threads', desc: 'Number of threads' },
             { name: 'api-key', type: 'text', label: 'NCBI API Key', desc: 'NCBI API key' }
         ],
         'Neighborhood Window': [
-            { name: 'win-mode', type: 'select', label: 'Window Mode', desc: 'Window mode', options: ['win_nts', 'win_genes'], def: 'win_genes' },
-            { name: 'win', type: 'int', label: 'Window Size', desc: 'Window size', def: 20000 },
+            { name: 'win-mode', type: 'select', label: 'Window Mode', desc: 'Window mode', options: ['win_nts', 'win_genes'] },
+            { name: 'win', type: 'int', label: 'Window Size', desc: 'Window size' },
             { name: 'min-win', type: 'int', label: 'Min Window', desc: 'Min window size' },
             { name: 'min-win-type', type: 'select', label: 'Min Window Type', desc: 'Type of min window', options: ['total', 'upstream', 'downstream', 'both'] }
         ],
         'Clustering': [
-            { name: 'cand-mode', type: 'select', label: 'Candidate Mode', desc: 'IPG representative mode', options: ['any_ipg', 'best_ipg', 'best_id', 'one_id', 'same_id'], def: 'best_ipg' },
-            { name: 'clust-method', type: 'select', label: 'Clustering Method', desc: 'Clustering method', options: ['diamond_deepclust', 'deepmmseqs', 'jackhmmer', 'blastp'], def: 'diamond_deepclust' }
+            { name: 'cand-mode', type: 'select', label: 'Candidate Mode', desc: 'IPG representative mode', options: ['any_ipg', 'best_ipg', 'best_id', 'one_id', 'same_id'] },
+            { name: 'clust-method', type: 'select', label: 'Clustering Method', desc: 'Clustering method', options: ['diamond_deepclust', 'deepmmseqs', 'jackhmmer', 'blastp'] }
         ],
         'Tree Construction': [
-            { name: 'tree-mode', type: 'select', label: 'Tree Mode', desc: 'Tree building method', options: ['taxonomy', 'fast_nj', 'aai_tree', 'ani_tree', 'fast_ml', 'neigh_similarity_tree', 'neigh_phylo_tree'], def: 'taxonomy' }
+            { name: 'tree-mode', type: 'select', label: 'Tree Mode', desc: 'Tree building method', options: ['taxonomy', 'fast_nj', 'aai_tree', 'ani_tree', 'fast_ml', 'use_input_tree', 'foldmason_tree', 'neigh_similarity_tree', 'neigh_phylo_tree'] },
+            { name: 'tree-file', type: 'text', label: 'Tree File', desc: 'Path to the tree file' }
         ],
         'Pairwise Comparisons': [
             { name: 'ani-mode', type: 'select', label: 'ANI Mode', desc: 'ANI calculation method', options: ['skani', 'blastn'] },
-            { name: 'nt-aln-mode', type: 'select', label: 'NT Alignment', desc: 'Nucleotide alignment mode', options: ['blastn', 'fastani', 'minimap2', 'intergenic_blastn'], def: 'blastn' },
-            { name: 'aai-mode', type: 'select', label: 'AAI Mode', desc: 'AAI/proteome similarity mode', options: ['wgrr', 'aai', 'hyper', 'all'], def: 'wgrr' },
-            { name: 'aai-subset-mode', type: 'select', label: 'AAI Subset', desc: 'AAI subset mode', options: ['target_prot', 'target_region', 'window'], def: 'target_prot' },
-            { name: 'min-pident', type: 'float', label: 'Min % Identity', desc: 'Min percent identity', def: 30 }
+            { name: 'nt-aln-mode', type: 'select', label: 'NT Alignment', desc: 'Nucleotide alignment mode', options: ['blastn', 'fastani', 'minimap2', 'intergenic_blastn'] },
+            { name: 'aai-mode', type: 'select', label: 'AAI Mode', desc: 'AAI/proteome similarity mode', options: ['wgrr', 'aai', 'hyper', 'all'] },
+            { name: 'aai-subset-mode', type: 'select', label: 'AAI Subset', desc: 'AAI subset mode', options: ['target_prot', 'target_region', 'window'] },
+            { name: 'min-pident', type: 'float', label: 'Min % Identity', desc: 'Min percent identity' }
         ],
         'Annotations': [
             { name: 'padloc', type: 'bool', label: 'PADLOC', desc: 'Antiphage defense' },
             { name: 'deffinder', type: 'bool', label: 'DefenseFinder', desc: 'Antiphage defense' },
             { name: 'cctyper', type: 'bool', label: 'CCtyper', desc: 'CRISPR-Cas prediction' },
+            { name: 'ncrna', type: 'bool', label: 'ncRNA', desc: 'Run Infernal for ncRNA prediction' },
             { name: 'genomad', type: 'bool', label: 'geNomad', desc: 'MGE identification' },
+            { name: 'sorfs', type: 'bool', label: 'sORFs', desc: 'Reannotate small open reading frames' },
+            { name: 'emapper', type: 'bool', label: 'eggNOG-mapper', desc: 'Run eggNOG-mapper to annotate proteins' },
             { name: 'domains', type: 'multiselect', label: 'Domains', desc: 'MetaCerberus DBs', 
               options: ['amrfinder', 'cazy', 'cog', 'foam', 'gvdb', 'kegg', 'kofam', 'methmmdb', 'nfixdb', 'pfam', 'pgap', 'phrog', 'pvog', 'tigrfam', 'vog-r225'] }
         ],
         'Links': [
-            { name: 'prot-links', type: 'switch', label: 'Protein Links', desc: 'Pairwise protein comparisons', def: true },
+            { name: 'prot-links', type: 'switch', label: 'Protein Links', desc: 'Pairwise protein comparisons' },
             { name: 'nt-links', type: 'switch', label: 'Nucleotide Links', desc: 'Pairwise nucleotide comparisons' }
+        ],
+        'Logging': [
+            { name: 'quiet', type: 'bool', label: 'Quiet Mode', desc: 'Silence all non-error output' },
+            { name: 'debug', type: 'bool', label: 'Debug Mode', desc: 'Enable verbose debug logging' }
         ]
     };
 
@@ -71,7 +83,8 @@ function render({ model, el }) {
         'Tree Construction': { bg: '#ccfbf1', text: '#0f766e' },
         'Pairwise Comparisons': { bg: '#ffedd5', text: '#c2410c' },
         'Annotations': { bg: '#f3f4f6', text: '#374151' },
-        'Links': { bg: '#f3f4f6', text: '#374151' }
+        'Links': { bg: '#f3f4f6', text: '#374151' },
+        'Logging': { bg: '#fef2f2', text: '#991b1b' }
     };
 
     // Icons
@@ -401,10 +414,6 @@ function render({ model, el }) {
                     if (state[param.name] === opt) option.selected = true;
                     input.appendChild(option);
                 });
-                if (param.def && !state[param.name]) {
-                    input.value = param.def;
-                    state[param.name] = param.def;
-                }
             } else {
                 // Special handling for input field in list mode - use textarea
                 if (param.name === 'input' && currentMode === 'list') {

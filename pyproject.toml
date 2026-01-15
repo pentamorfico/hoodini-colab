@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "hoodini-colab"
-version = "0.1.1"
+version = "0.1.2"
 description = "Interactive parameter configurator for the Hoodini CLI genomic neighborhood analysis tool"
 readme = "README.md"
 requires-python = ">=3.9"
