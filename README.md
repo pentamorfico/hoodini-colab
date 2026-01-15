@@ -2,6 +2,8 @@
 
 Interactive parameter configurator for the Hoodini CLI genomic neighborhood analysis tool. **Designed for Google Colab** to run genomic analyses in the cloud without any local installation.
 
+![Hoodini Colab Launcher Interface](assets/images/screenshot.png)
+
 ## What is this?
 
 hoodini-colab is an interactive Jupyter widget that makes it easy to configure and run genomic neighborhood analyses with Hoodini. Instead of remembering dozens of command-line parameters and flags, you get a visual interface where you can click, select, and configure everything through an intuitive web-based UI.
