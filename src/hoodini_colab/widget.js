@@ -264,6 +264,10 @@ function render({ model, el }) {
             
             // Special handling for mount-gdrive: update output folder automatically
             if (param.name === 'mount-gdrive') {
+                // Sync with Python model
+                model.set('mount_gdrive', input.checked);
+                model.save_changes();
+                
                 const outputInput = el.querySelector('input[placeholder*="Output folder"]');
                 if (outputInput) {
                     if (input.checked) {
