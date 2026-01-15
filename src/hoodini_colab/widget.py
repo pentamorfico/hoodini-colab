@@ -1,9 +1,11 @@
 """Hoodini Launcher widget - Interactive parameter configurator for Hoodini CLI."""
 
+import io
 import os
 import subprocess
 import threading
 from pathlib import Path
+from contextlib import redirect_stderr, redirect_stdout
 
 import anywidget
 import traitlets
@@ -97,53 +99,68 @@ def create_launcher() -> HoodiniLauncher:
                 """Append text to the synced logs."""
                 launcher.logs = (launcher.logs or "") + text
 
+            class _LogWriter(io.StringIO):
+                def __init__(self, cb):
+                    super().__init__()
+                    self.cb = cb
+
+                def write(self, s):
+                    self.cb(s)
+                    return len(s)
+
+                def flush(self):
+                    return
+
+            log_writer = _LogWriter(append_log)
+
             try:
-                # Mount Google Drive if requested
-                gdrive_mount_path = None
-                if launcher.mount_gdrive:
-                    launcher.status_state = "installing_launcher"
-                    launcher.status_message = "Mounting Google Drive..."
-                    append_log("🔍 Mounting Google Drive...\n")
-                    try:
-                        from google.colab import drive
-                        gdrive_mount_path = '/content/drive'
-                        drive.mount(gdrive_mount_path)
-                        append_log("✅ Google Drive mounted successfully at /content/drive/MyDrive\n\n")
-                        launcher.status_state = "idle"
-                        launcher.status_message = ""
-                    except ImportError:
-                        append_log("⚠️  Google Drive mount only available in Google Colab. Skipping...\n\n")
-                        gdrive_mount_path = None
-                    except Exception as e:
-                        append_log(f"⚠️  Could not mount Google Drive: {e}\n\n")
-                        gdrive_mount_path = None
+                with redirect_stdout(log_writer), redirect_stderr(log_writer):
+                    # Mount Google Drive if requested
+                    gdrive_mount_path = None
+                    if launcher.mount_gdrive:
+                        launcher.status_state = "installing_launcher"
+                        launcher.status_message = "Mounting Google Drive..."
+                        append_log("🔍 Mounting Google Drive...\n")
+                        try:
+                            from google.colab import drive
+                            gdrive_mount_path = '/content/drive'
+                            drive.mount(gdrive_mount_path)
+                            append_log("✅ Google Drive mounted successfully at /content/drive/MyDrive\n\n")
+                            launcher.status_state = "idle"
+                            launcher.status_message = ""
+                        except ImportError:
+                            append_log("⚠️  Google Drive mount only available in Google Colab. Skipping...\n\n")
+                            gdrive_mount_path = None
+                        except Exception as e:
+                            append_log(f"⚠️  Could not mount Google Drive: {e}\n\n")
+                            gdrive_mount_path = None
 
-                # First, check if launcher packages are installed
-                if not check_launcher_packages():
-                    launcher.status_state = "installing_launcher"
-                    launcher.status_message = "Installing launcher dependencies..."
-                    append_log("🔍 Launcher dependencies not found. Installing...\n")
-                    if not install_launcher_packages():
-                        append_log("❌ Failed to install launcher dependencies.\n")
-                        launcher.status_state = "error"
-                        launcher.status_message = "Failed to install launcher dependencies"
-                        return
-                else:
-                    append_log("✅ Launcher dependencies are already installed\n\n")
+                    # First, check if launcher packages are installed
+                    if not check_launcher_packages():
+                        launcher.status_state = "installing_launcher"
+                        launcher.status_message = "Installing launcher dependencies..."
+                        append_log("🔍 Launcher dependencies not found. Installing...\n")
+                        if not install_launcher_packages():
+                            append_log("❌ Failed to install launcher dependencies.\n")
+                            launcher.status_state = "error"
+                            launcher.status_message = "Failed to install launcher dependencies"
+                            return
+                    else:
+                        append_log("✅ Launcher dependencies are already installed\n\n")
 
-                # Check if hoodini is installed
-                if not check_hoodini_installed():
-                    launcher.status_state = "installing_hoodini"
-                    launcher.status_message = "Installing Hoodini and downloading databases..."
-                    append_log("🔍 Hoodini not found in PATH. Installing...\n")
-                    # Pass the command so we can determine which databases to download
-                    if not install_hoodini(launcher.command, launcher):
-                        append_log("❌ Installation failed. Please check the errors above.\n")
-                        launcher.status_state = "error"
-                        launcher.status_message = "Hoodini installation failed"
-                        return
-                else:
-                    append_log("✅ Hoodini is already installed\n\n")
+                    # Check if hoodini is installed
+                    if not check_hoodini_installed():
+                        launcher.status_state = "installing_hoodini"
+                        launcher.status_message = "Installing Hoodini and downloading databases..."
+                        append_log("🔍 Hoodini not found in PATH. Installing...\n")
+                        # Pass the command so we can determine which databases to download
+                        if not install_hoodini(launcher.command, launcher):
+                            append_log("❌ Installation failed. Please check the errors above.\n")
+                            launcher.status_state = "error"
+                            launcher.status_message = "Hoodini installation failed"
+                            return
+                    else:
+                        append_log("✅ Hoodini is already installed\n\n")
 
                 # Run the command
                 launcher.status_state = "running"

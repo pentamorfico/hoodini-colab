@@ -1044,10 +1044,6 @@ function render({ model, el }) {
         if (!logContentEl) return;
         const logs = model.get('logs') || '';
         logContentEl.textContent = logs;
-        // Auto-open when new logs arrive during a run
-        if (logs && !logsOpen) {
-            logsOpen = true;
-        }
         updateLogsVisibility();
     });
 
