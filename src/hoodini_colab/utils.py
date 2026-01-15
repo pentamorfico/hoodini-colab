@@ -129,16 +129,25 @@ def install_hoodini(command: str = "", launcher=None) -> bool:
     os.chdir(workdir)
     os.environ["PATH"] = str(Path.home() / ".pixi" / "bin") + ":" + os.environ["PATH"]
 
+    # Check if pixi is installed
+    pixi_check = subprocess.run(["which", "pixi"], capture_output=True, text=True)
+    pixi_installed = pixi_check.returncode == 0
+    
+    if not pixi_installed:
+        # Install pixi
+        print("\n=== Installing pixi ===\n")
+        if run_cmd("curl -fsSL https://pixi.sh/install.sh | bash") != 0:
+            print("❌ Failed to install pixi")
+            return False
+        print("✅ Pixi installed successfully\n")
+    else:
+        print("\n✅ Pixi already installed\n")
+
     # Check if pixi.toml already exists (environment already initialized)
     pixi_toml = workdir / "pixi.toml"
     env_already_exists = pixi_toml.exists()
 
     if not env_already_exists:
-        # Install pixi if not already installed
-        print("\n=== Installing pixi ===\n")
-        if run_cmd("curl -fsSL https://pixi.sh/install.sh | bash") != 0:
-            print("❌ Failed to install pixi")
-            return False
 
         # Download environment.yml
         print("\n=== Downloading environment.yml ===\n")
