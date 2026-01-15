@@ -963,6 +963,9 @@ function render({ model, el }) {
             if (state === 'installing' || state === 'installing_launcher' || state === 'installing_hoodini') {
                 indicator.classList.add('status-installing');
                 indicator.innerHTML = icons.spinner + ' <strong>Installing:</strong> ' + message;
+            } else if (state === 'downloading_databases') {
+                indicator.classList.add('status-installing');
+                indicator.innerHTML = icons.spinner + ' <strong>Downloading:</strong> ' + message;
             } else if (state === 'running') {
                 indicator.classList.add('status-running');
                 indicator.innerHTML = icons.spinner + ' <strong>Running:</strong> ' + message;
