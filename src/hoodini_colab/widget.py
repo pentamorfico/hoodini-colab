@@ -72,7 +72,9 @@ def create_launcher() -> HoodiniLauncher:
                         from google.colab import drive
                         gdrive_mount_path = '/content/drive'
                         drive.mount(gdrive_mount_path)
-                        print("✅ Google Drive mounted successfully at /content/drive/My Drive\n")
+                        print("✅ Google Drive mounted successfully at /content/drive/MyDrive\n")
+                        launcher.status_state = "idle"
+                        launcher.status_message = ""
                     except ImportError:
                         print("⚠️  Google Drive mount only available in Google Colab. Skipping...\n")
                         gdrive_mount_path = None

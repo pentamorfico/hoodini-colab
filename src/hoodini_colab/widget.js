@@ -278,8 +278,8 @@ function render({ model, el }) {
                             state['_previous_output'] = state['output'];
                         }
                         // Set to Google Drive path
-                        state['output'] = '/content/drive/My Drive';
-                        outputInput.value = '/content/drive/My Drive';
+                        state['output'] = '/content/drive/MyDrive';
+                        outputInput.value = '/content/drive/MyDrive';
                     } else {
                         // Restore previous output value
                         const previousOutput = state['_previous_output'] || 'results';
