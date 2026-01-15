@@ -81,11 +81,12 @@ def run_cmd(cmd: str, shell: bool = True) -> int:
     return process.returncode
 
 
-def install_hoodini(command: str = "") -> bool:
+def install_hoodini(command: str = "", launcher=None) -> bool:
     """Install pixi and hoodini environment.
     
     Args:
         command: The hoodini command to be executed, used to determine which databases to download.
+        launcher: Optional HoodiniLauncher widget to update status.
 
     Returns:
         bool: True if installation succeeded, False otherwise.
@@ -125,6 +126,9 @@ def install_hoodini(command: str = "") -> bool:
         return False
 
     # Download databases
+    if launcher:
+        launcher.status_state = "downloading_databases"
+        launcher.status_message = "Downloading reference databases (this may take 5-10 minutes)..."
     print("\n=== Downloading Hoodini databases ===\n")
     
     # Build download command based on what's needed

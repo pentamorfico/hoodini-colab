@@ -42,6 +42,8 @@ The fastest way to try hoodini-colab is through Google Colab, where you don't ne
 
 Once the notebook opens, run the cells in order. The first cell installs the package, and the second cell displays the interactive launcher widget where you can start configuring your analysis immediately.
 
+⏱️ **Note on execution time**: The first time you run Hoodini, it needs to install the tool and download reference databases. This process typically takes **5-10 minutes** depending on which annotation tools you enable (PADLOC, DefenseFinder, geNomad, eggNOG). More tools selected means more databases to download and longer initial setup time. Subsequent runs will be much faster as everything is already installed.
+
 If you're working in a local Jupyter notebook, the setup is equally simple:
 
 ```python
