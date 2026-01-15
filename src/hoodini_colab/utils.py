@@ -83,7 +83,7 @@ def run_cmd(cmd: str, shell: bool = True) -> int:
 
 def install_hoodini(command: str = "", launcher=None) -> bool:
     """Install pixi and hoodini environment.
-    
+
     Args:
         command: The hoodini command to be executed, used to determine which databases to download.
         launcher: Optional HoodiniLauncher widget to update status.
@@ -130,10 +130,10 @@ def install_hoodini(command: str = "", launcher=None) -> bool:
         launcher.status_state = "downloading_databases"
         launcher.status_message = "Downloading reference databases (this may take 5-10 minutes)..."
     print("\n=== Downloading Hoodini databases ===\n")
-    
+
     # Build download command based on what's needed
     download_flags = ["--force"]  # Always force download
-    
+
     # Check which tools are NOT in the command and skip their databases
     if "--padloc" not in command:
         download_flags.append("--skip-padloc")
@@ -141,14 +141,14 @@ def install_hoodini(command: str = "", launcher=None) -> bool:
         download_flags.append("--skip-deffinder")
     if "--genomad" not in command:
         download_flags.append("--skip-genomad")
-    
+
     # Always skip emapper for now (too large)
     download_flags.append("--skip-emapper")
     download_flags.append("--skip-parquet")
-    
+
     download_cmd = f"pixi run hoodini download databases {' '.join(download_flags)}"
     print(f"Running: {download_cmd}\n")
-    
+
     if run_cmd(download_cmd) != 0:
         print("❌ Failed to download databases")
         return False

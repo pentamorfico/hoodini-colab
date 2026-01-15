@@ -1,14 +1,12 @@
 # <img src="assets/images/hoodini_logo.svg" alt="Hoodini Logo" height="40" align="center"> hoodini-colab [![PyPI](https://img.shields.io/pypi/v/hoodini-colab?cacheSeconds=300)](https://pypi.org/project/hoodini-colab/) [![Python](https://img.shields.io/pypi/pyversions/hoodini-colab?cacheSeconds=300)](https://pypi.org/project/hoodini-colab/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pentamorfico/hoodini-colab/blob/main/hoodini_colab.ipynb)
 
-Interactive parameter configurator for the Hoodini CLI genomic neighborhood analysis tool.
+Interactive parameter configurator for the Hoodini CLI genomic neighborhood analysis tool. **Designed for Google Colab** to run genomic analyses in the cloud without any local installation.
 
 ## What is this?
 
 hoodini-colab is an interactive Jupyter widget that makes it easy to configure and run genomic neighborhood analyses with Hoodini. Instead of remembering dozens of command-line parameters and flags, you get a visual interface where you can click, select, and configure everything through an intuitive web-based UI.
 
-The launcher provides three different input modes depending on your needs. You can analyze a single protein, process a list of multiple proteins, or work with a detailed spreadsheet containing specific genomic coordinates. As you configure your parameters, the tool generates the complete command line in real-time, which you can copy for later use or execute directly from the interface.
-
-The widget handles all the complexity of installing Hoodini and its dependencies automatically through pixi. When you click the run button, it checks if Hoodini is installed, sets up the environment if needed, and executes your analysis while showing you the progress in real-time. This means you can go from zero to running a full genomic neighborhood analysis in just a few clicks, even if you've never used Hoodini before.
+Built specifically for **Google Colab**, this tool allows researchers to run complex genomic analyses directly in their browser without installing any software locally. The widget handles all the complexity of installing Hoodini and its dependencies automatically through pixi, making it perfect for users who want to try Hoodini without setting up a local bioinformatics environment.
 
 ## Key Features
 
@@ -36,7 +34,7 @@ The development installation includes additional tools like ruff for linting and
 
 ## Quick Start
 
-The fastest way to try hoodini-colab is through Google Colab, where you don't need to install anything on your computer. Just click the badge below and the notebook will open in your browser:
+The fastest way to try hoodini-colab is through **Google Colab** (recommended), where you don't need to install anything on your computer. Just click the badge below and the notebook will open in your browser:
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pentamorfico/hoodini-colab/blob/main/hoodini_colab.ipynb)
 
@@ -44,7 +42,9 @@ Once the notebook opens, run the cells in order. The first cell installs the pac
 
 ⏱️ **Note on execution time**: The first time you run Hoodini, it needs to install the tool and download reference databases. This process typically takes **5-10 minutes** depending on which annotation tools you enable (PADLOC, DefenseFinder, geNomad, eggNOG). More tools selected means more databases to download and longer initial setup time. Subsequent runs will be much faster as everything is already installed.
 
-If you're working in a local Jupyter notebook, the setup is equally simple:
+### Local Jupyter Notebook
+
+While this tool is optimized for Google Colab, you can also use it in a local Jupyter notebook:
 
 ```python
 from hoodini_colab import create_launcher
