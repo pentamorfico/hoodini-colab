@@ -34,8 +34,14 @@ Thank you for your interest in contributing to hoodini-colab! 🎉
 
 3. Format and lint your code
    ```bash
-   make format
-   make lint
+   # Format code
+   ruff format src/
+   
+   # Check linting
+   ruff check src/
+   
+   # Type checking
+   mypy src/
    ```
 
 4. Test your changes
@@ -43,9 +49,14 @@ Thank you for your interest in contributing to hoodini-colab! 🎉
    # Import test
    python -c "from hoodini_colab import create_launcher"
    
+   # Run tests (when available)
+   pytest
+   
    # Test in a notebook
    jupyter notebook hoodini_colab.ipynb
    ```
+   
+   **Tip**: Check `.github/workflows/ci.yml` to see exactly what the CI runs
 
 5. Commit your changes
    ```bash
@@ -72,9 +83,22 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) speci
 - Follow PEP 8 guidelines
 - Use type hints where possible
 
-Run formatting:
+**Common Commands:**
 ```bash
+# Format code
 ruff format src/
+
+# Check linting
+ruff check src/
+
+# Fix auto-fixable issues
+ruff check --fix src/
+
+# Type checking
+mypy src/
+
+# Build package
+python -m build
 ```
 
 Run linting:
