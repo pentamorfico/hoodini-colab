@@ -46,5 +46,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive README with examples
 - MIT License
 
-[Unreleased]: https://github.com/hoodini/hoodini-colab/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/hoodini/hoodini-colab/releases/tag/v0.1.0
+[Unreleased]: https://github.com/pentamorfico/hoodini-colab/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/pentamorfico/hoodini-colab/releases/tag/v0.1.0
