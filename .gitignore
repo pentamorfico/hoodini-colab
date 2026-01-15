@@ -48,6 +48,10 @@ dmypy.json
 .ipynb_checkpoints
 *.ipynb_checkpoints
 
+# Hoodini results
+results/
+=0.1.3
+
 # Environment
 .env
 .venv

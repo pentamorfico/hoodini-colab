@@ -10,6 +10,7 @@ function render({ model, el }) {
             { name: 'input', type: 'text', label: 'Input', desc: 'Protein ID, FASTA, or file path', modes: ['single', 'list'] },
             { name: 'output', type: 'text', label: 'Output Folder', desc: 'Output folder name', def: 'results' },
             { name: 'force', type: 'switch', label: 'Force Overwrite', desc: 'Force re-download and overwrite existing files', def: false },
+            { name: 'mount-gdrive', type: 'switch', label: 'Mount Google Drive', desc: 'Mount Google Drive and save results to My Drive', def: false, colab_only: true },
             
         ],
         'Remote BLAST': [
@@ -117,6 +118,9 @@ function render({ model, el }) {
             
             // Skip inputsheet param in sheet mode (handled above)
             if (currentMode === 'sheet' && param.name === 'inputsheet') return;
+            
+            // Skip mount-gdrive as it's not a hoodini parameter
+            if (param.name === 'mount-gdrive') return;
             
             let key = param.name;
             let value = state[key];
@@ -257,6 +261,31 @@ function render({ model, el }) {
         input.checked = (state[param.name] !== undefined) ? state[param.name] : !!param.def;
         input.onchange = () => {
             state[param.name] = input.checked;
+            
+            // Special handling for mount-gdrive: update output folder automatically
+            if (param.name === 'mount-gdrive') {
+                const outputInput = el.querySelector('input[placeholder*="Output folder"]');
+                if (outputInput) {
+                    if (input.checked) {
+                        // Save current output value before changing
+                        if (!state['output'] || state['output'] === 'results') {
+                            state['_previous_output'] = 'results';
+                        } else {
+                            state['_previous_output'] = state['output'];
+                        }
+                        // Set to Google Drive path
+                        state['output'] = '/content/drive/My Drive';
+                        outputInput.value = '/content/drive/My Drive';
+                    } else {
+                        // Restore previous output value
+                        const previousOutput = state['_previous_output'] || 'results';
+                        state['output'] = previousOutput;
+                        outputInput.value = previousOutput;
+                        delete state['_previous_output'];
+                    }
+                }
+            }
+            
             updateCommand();
         };
         
@@ -901,6 +930,21 @@ function render({ model, el }) {
     statusIndicator.id = 'status-indicator';
     launcher.appendChild(statusIndicator);
     
+    // HTML Visualization Container
+    const htmlVisualizationContainer = document.createElement('div');
+    htmlVisualizationContainer.id = 'html-visualization-container';
+    htmlVisualizationContainer.style.display = 'none';
+    htmlVisualizationContainer.style.marginTop = '20px';
+    htmlVisualizationContainer.innerHTML = 
+        '<div style="background:#f8f9fa; border:1px solid #e0e0e0; border-radius:8px; padding:16px">' +
+        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">' +
+        '<h3 style="margin:0; font-size:16px; font-weight:600">📊 Interactive Visualization</h3>' +
+        '<button id="download-html-btn" class="btn btn-secondary" style="padding:6px 12px">' + icons.copy + ' Download HTML</button>' +
+        '</div>' +
+        '<iframe id="html-viewer" style="width:100%; height:800px; border:1px solid #ddd; border-radius:4px"></iframe>' +
+        '</div>';
+    launcher.appendChild(htmlVisualizationContainer);
+    
     el.appendChild(launcher);
     
     // Listen for status changes from Python
@@ -916,7 +960,7 @@ function render({ model, el }) {
             indicator.classList.add('show');
             indicator.className = 'status-indicator show';
             
-            if (state === 'installing') {
+            if (state === 'installing' || state === 'installing_launcher' || state === 'installing_hoodini') {
                 indicator.classList.add('status-installing');
                 indicator.innerHTML = icons.spinner + ' <strong>Installing:</strong> ' + message;
             } else if (state === 'running') {
@@ -932,6 +976,22 @@ function render({ model, el }) {
         }
     });
 
+    // Listen for HTML output
+    model.on('change:html_output', () => {
+        const htmlContent = model.get('html_output');
+        if (htmlContent) {
+            const container = el.querySelector('#html-visualization-container');
+            const iframeViewer = el.querySelector('#html-viewer');
+            
+            // Display the HTML in iframe using blob URL
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const blobUrl = URL.createObjectURL(blob);
+            iframeViewer.src = blobUrl;
+            
+            container.style.display = 'block';
+        }
+    });
+
     // Handlers
     el.querySelector('#copy-btn').onclick = function() {
         const cmd = buildCommand();
@@ -944,6 +1004,21 @@ function render({ model, el }) {
     el.querySelector('#run-btn').onclick = () => {
         model.set('run_requested', true);
         model.save_changes();
+    };
+
+    el.querySelector('#download-html-btn').onclick = () => {
+        const htmlContent = model.get('html_output');
+        if (htmlContent) {
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'hoodini-visualization.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
     };
 
     el.querySelector('#reset-btn').onclick = () => {

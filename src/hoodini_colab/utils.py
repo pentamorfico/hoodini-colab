@@ -53,13 +53,41 @@ def install_launcher_packages() -> bool:
 
 
 def check_hoodini_installed() -> bool:
-    """Check if hoodini is available in PATH.
+    """Check if hoodini is available in PATH or via pixi.
 
     Returns:
         bool: True if hoodini is installed, False otherwise.
     """
+    # First check if hoodini is in PATH
     result = subprocess.run(["which", "hoodini"], capture_output=True, text=True)
-    return result.returncode == 0
+    if result.returncode == 0:
+        return True
+    
+    # Check if pixi environment exists and hoodini works there
+    if Path("/content/hoodini_env").exists():
+        workdir = Path("/content/hoodini_env")
+    else:
+        workdir = Path.home() / "hoodini_env"
+    
+    pixi_toml = workdir / "pixi.toml"
+    if pixi_toml.exists():
+        # Try to run hoodini via pixi
+        original_dir = Path.cwd()
+        try:
+            os.chdir(workdir)
+            result = subprocess.run(
+                ["pixi", "run", "hoodini", "--help"],
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+            os.chdir(original_dir)
+            return result.returncode == 0
+        except Exception:
+            os.chdir(original_dir)
+            return False
+    
+    return False
 
 
 def run_cmd(cmd: str, shell: bool = True) -> int:
@@ -101,29 +129,36 @@ def install_hoodini(command: str = "", launcher=None) -> bool:
     os.chdir(workdir)
     os.environ["PATH"] = str(Path.home() / ".pixi" / "bin") + ":" + os.environ["PATH"]
 
-    # Install pixi
-    print("\n=== Installing pixi ===\n")
-    if run_cmd("curl -fsSL https://pixi.sh/install.sh | bash") != 0:
-        print("❌ Failed to install pixi")
-        return False
+    # Check if pixi.toml already exists (environment already initialized)
+    pixi_toml = workdir / "pixi.toml"
+    env_already_exists = pixi_toml.exists()
 
-    # Download environment.yml
-    print("\n=== Downloading environment.yml ===\n")
-    if run_cmd("wget -O environment.yml https://storage.hoodini.bio/environment.yml") != 0:
-        print("❌ Failed to download environment.yml")
-        return False
+    if not env_already_exists:
+        # Install pixi if not already installed
+        print("\n=== Installing pixi ===\n")
+        if run_cmd("curl -fsSL https://pixi.sh/install.sh | bash") != 0:
+            print("❌ Failed to install pixi")
+            return False
 
-    # Initialize pixi environment
-    print("\n=== Initializing pixi environment ===\n")
-    if run_cmd("pixi init --import environment.yml") != 0:
-        print("❌ Failed to initialize pixi")
-        return False
+        # Download environment.yml
+        print("\n=== Downloading environment.yml ===\n")
+        if run_cmd("wget -O environment.yml https://storage.hoodini.bio/environment.yml") != 0:
+            print("❌ Failed to download environment.yml")
+            return False
 
-    # Install dependencies
-    print("\n=== Installing dependencies (this may take a while) ===\n")
-    if run_cmd("pixi install") != 0:
-        print("❌ Failed to install dependencies")
-        return False
+        # Initialize pixi environment
+        print("\n=== Initializing pixi environment ===\n")
+        if run_cmd("pixi init --import environment.yml") != 0:
+            print("❌ Failed to initialize pixi")
+            return False
+
+        # Install dependencies
+        print("\n=== Installing dependencies (this may take a while) ===\n")
+        if run_cmd("pixi install") != 0:
+            print("❌ Failed to install dependencies")
+            return False
+    else:
+        print("\n✅ Pixi environment already initialized\n")
 
     # Download databases
     if launcher:

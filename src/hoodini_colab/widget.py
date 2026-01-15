@@ -30,6 +30,8 @@ class HoodiniLauncher(anywidget.AnyWidget):
     run_requested = traitlets.Bool(False).tag(sync=True)
     status_state = traitlets.Unicode("idle").tag(sync=True)
     status_message = traitlets.Unicode("").tag(sync=True)
+    mount_gdrive = traitlets.Bool(False).tag(sync=True)
+    html_output = traitlets.Unicode("").tag(sync=True)
 
 
 def create_launcher() -> HoodiniLauncher:
@@ -60,6 +62,24 @@ def create_launcher() -> HoodiniLauncher:
             launcher.status_state = "idle"
 
             try:
+                # Mount Google Drive if requested
+                gdrive_mount_path = None
+                if launcher.mount_gdrive:
+                    launcher.status_state = "installing_launcher"
+                    launcher.status_message = "Mounting Google Drive..."
+                    print("🔍 Mounting Google Drive...")
+                    try:
+                        from google.colab import drive
+                        gdrive_mount_path = '/content/drive'
+                        drive.mount(gdrive_mount_path)
+                        print("✅ Google Drive mounted successfully at /content/drive/My Drive\n")
+                    except ImportError:
+                        print("⚠️  Google Drive mount only available in Google Colab. Skipping...\n")
+                        gdrive_mount_path = None
+                    except Exception as e:
+                        print(f"⚠️  Could not mount Google Drive: {e}\n")
+                        gdrive_mount_path = None
+
                 # First, check if launcher packages are installed
                 if not check_launcher_packages():
                     launcher.status_state = "installing_launcher"
@@ -122,6 +142,22 @@ def create_launcher() -> HoodiniLauncher:
                     print("\n" + "=" * 60)
                     print("✅ Hoodini analysis completed successfully!")
                     print("=" * 60)
+                    
+                    # Try to read the HTML visualization
+                    output_folder = launcher.command.split('--output ')[-1].split()[0] if '--output' in launcher.command else 'results'
+                    html_path = Path(output_folder) / 'hoodini-viz' / 'hoodini-viz.html'
+                    
+                    if html_path.exists():
+                        try:
+                            with open(html_path, 'r') as f:
+                                html_content = f.read()
+                            launcher.html_output = html_content
+                            print(f"📊 Interactive visualization ready: {html_path}\n")
+                        except Exception as e:
+                            print(f"⚠️  Could not read HTML visualization: {e}\n")
+                    else:
+                        print(f"ℹ️  HTML visualization not found at {html_path}\n")
+                    
                     launcher.status_state = "finished"
                     launcher.status_message = "Analysis completed successfully!"
                 else:
