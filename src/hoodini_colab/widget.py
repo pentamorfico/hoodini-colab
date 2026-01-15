@@ -32,6 +32,7 @@ class HoodiniLauncher(anywidget.AnyWidget):
     status_message = traitlets.Unicode("").tag(sync=True)
     mount_gdrive = traitlets.Bool(False).tag(sync=True)
     html_output = traitlets.Unicode("").tag(sync=True)
+    input_list = traitlets.Unicode("").tag(sync=True)
 
 
 def create_launcher() -> HoodiniLauncher:
@@ -112,8 +113,34 @@ def create_launcher() -> HoodiniLauncher:
                 # Run the command
                 launcher.status_state = "running"
                 launcher.status_message = "Executing Hoodini analysis..."
+                
+                # Force update to ensure UI reflects the state change
+                import time
+                time.sleep(0.1)
 
                 cmd = launcher.command
+                
+                # Handle input list mode - save to file if input_list is provided
+                if launcher.input_list.strip():
+                    # Create temporary file with the input list
+                    import tempfile
+                    fd, input_list_path = tempfile.mkstemp(suffix='.txt', prefix='hoodini_input_list_')
+                    try:
+                        with open(fd, 'w') as f:
+                            f.write(launcher.input_list)
+                        print(f"📝 Saved input list to: {input_list_path}")
+                        # Replace --input <list> with --input <file_path>
+                        import re
+                        cmd = re.sub(r'--input\s+"[^"]+"', f'--input "{input_list_path}"', cmd)
+                        cmd = re.sub(r"--input\s+'[^']+'", f"--input '{input_list_path}'", cmd)
+                        cmd = re.sub(r'--input\s+\S+', f'--input "{input_list_path}"', cmd)
+                    except Exception as e:
+                        print(f"⚠️  Error saving input list to file: {e}")
+                        os.close(fd)
+                        launcher.status_state = "error"
+                        launcher.status_message = "Failed to save input list"
+                        return
+                
                 print(f"🚀 Running: {cmd}\n")
                 print("=" * 60 + "\n")
 

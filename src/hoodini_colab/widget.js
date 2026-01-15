@@ -113,6 +113,17 @@ function render({ model, el }) {
             cmd += ' --inputsheet <input_sheet.tsv>';
         }
         
+        // Handle input list mode specially - send list data to Python
+        if (currentMode === 'list' && state.input) {
+            // Send the input list to Python so it can save it to a file
+            model.set('input_list', state.input);
+            model.save_changes();
+        } else {
+            // Clear input_list if not in list mode
+            model.set('input_list', '');
+            model.save_changes();
+        }
+        
         Object.values(params).flat().forEach(param => {
             if (param.modes && !param.modes.includes(currentMode)) return;
             
@@ -140,8 +151,13 @@ function render({ model, el }) {
             if (typeof value === 'boolean') {
                 if (value) cmd += ' --' + key;
             } else {
-                let valStr = (typeof value === 'string' && value.includes(' ')) ? '"' + value + '"' : value;
-                cmd += ' --' + key + ' ' + valStr;
+                // In list mode, show placeholder since file will be created by Python
+                if (key === 'input' && currentMode === 'list') {
+                    cmd += ' --' + key + ' <input_list.txt>';
+                } else {
+                    let valStr = (typeof value === 'string' && value.includes(' ')) ? '"' + value + '"' : value;
+                    cmd += ' --' + key + ' ' + valStr;
+                }
             }
         });
         // Enforce Google Colab default threads: always use 2 and hide control
