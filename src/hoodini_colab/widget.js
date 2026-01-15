@@ -8,7 +8,8 @@ function render({ model, el }) {
     const params = {
         'Input/Output': [
             { name: 'input', type: 'text', label: 'Input', desc: 'Protein ID, FASTA, or file path', modes: ['single', 'list'] },
-            { name: 'output', type: 'text', label: 'Output Folder', desc: 'Output folder name', def: 'hoodini_output' }
+            { name: 'output', type: 'text', label: 'Output Folder', desc: 'Output folder name', def: 'hoodini_output' },
+            { name: 'force', type: 'bool', label: 'Force Overwrite', desc: 'Force re-download and overwrite existing files', def: true }
         ],
         'Remote BLAST': [
             { name: 'remote-evalue', type: 'float', label: 'E-value', desc: 'Remote BLAST E-value', def: 0.001, modes: ['single'] },
@@ -42,9 +43,7 @@ function render({ model, el }) {
             { name: 'padloc', type: 'bool', label: 'PADLOC', desc: 'Antiphage defense' },
             { name: 'deffinder', type: 'bool', label: 'DefenseFinder', desc: 'Antiphage defense' },
             { name: 'cctyper', type: 'bool', label: 'CCtyper', desc: 'CRISPR-Cas prediction' },
-            { name: 'ncrna', type: 'bool', label: 'ncRNA', desc: 'ncRNA prediction' },
-            { name: 'genomad', type: 'bool', label: 'GenoMAD', desc: 'MGE identification' },
-            { name: 'sorfs', type: 'bool', label: 'sORFs', desc: 'Reannotate small ORFs' },
+            { name: 'genomad', type: 'bool', label: 'geNomad', desc: 'MGE identification' },
             { name: 'domains', type: 'multiselect', label: 'Domains', desc: 'MetaCerberus DBs', 
               options: ['amrfinder', 'cazy', 'cog', 'foam', 'gvdb', 'kegg', 'kofam', 'methmmdb', 'nfixdb', 'pfam', 'pgap', 'phrog', 'pvog', 'tigrfam', 'vog-r225'] }
         ],
@@ -85,7 +84,7 @@ function render({ model, el }) {
         check: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>',
         alert: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
         terminal: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>',
-        dna: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 15c6.667-6 13.333 0 20-6"/><path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"/><path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993"/></svg>',
+        dna: '<svg width="24" height="24" viewBox="0 0 175 220" fill="currentColor"><path d="M70.1 31.2c-2.8 1.3-5.2 3.8-6.3 6.5-.7 1.7-.8 4.2-.8 13.8 0 12 0 11.8 2.3 14.7 1.7 2.1 6 4.8 8.1 5 1.9.2 6-.9 7.9-2.1 2.8-1.8 4.7-4.6 5.2-7.6.3-1.9.5-6.1.3-12.5-.2-9-.4-10-2.3-12.5-1.2-1.5-3.2-3.3-4.5-4-2.9-1.4-7.3-1.8-9.9-.3zM116.4 40.7c-.3.8-.4 5.2-.2 9.8.3 8.2.3 8.5 3.1 11.6 3.5 4 7.2 5.4 12.7 4.9 3.8-.4 7.6-2.4 9.7-5 1.9-2.4 2.3-4 2.3-9.8 0-6.9-.7-9.8-2.8-12-2.6-2.6-6.8-4.2-11.2-4.2-4.5 0-7.5 1-9.4 3.1-1.4 1.6-3.5 1.4-4.2-.6zm-56.9 30.5c-.9.8-1.5 2.3-1.5 3.5 0 2.6 3.3 6.2 6.6 7.3 3.5 1.1 8.3.3 11.3-2 2.8-2.1 3.1-2.8 3.1-6.5 0-3.3-.4-4.2-2.6-6-2.5-2-3.1-2.1-8.7-1.8-4.2.2-6.7.8-8.2 1.5zm56.3 29.3c-2.8 1.3-5.2 3.8-6.3 6.5-.7 1.7-.8 4.2-.8 13.8 0 12 0 11.8 2.3 14.7 1.7 2.1 6 4.8 8.1 5 1.9.2 6-.9 7.9-2.1 2.8-1.8 4.7-4.6 5.2-7.6.3-1.9.5-6.1.3-12.5-.2-9-.4-10-2.3-12.5-1.2-1.5-3.2-3.3-4.5-4-2.9-1.4-7.3-1.8-9.9-.3zM59.6 109.7c-.3.8-.4 5.2-.2 9.8.3 8.2.3 8.5 3.1 11.6 3.5 4 7.2 5.4 12.7 4.9 3.8-.4 7.6-2.4 9.7-5 1.9-2.4 2.3-4 2.3-9.8 0-6.9-.7-9.8-2.8-12-2.6-2.6-6.8-4.2-11.2-4.2-4.5 0-7.5 1-9.4 3.1-1.4 1.6-3.5 1.4-4.2-.4zm56.9 30.5c-.9.8-1.5 2.3-1.5 3.5 0 2.6 3.3 6.2 6.6 7.3 3.5 1.1 8.3.3 11.3-2 2.8-2.1 3.1-2.8 3.1-6.5 0-3.3-.4-4.2-2.6-6-2.5-2-3.1-2.1-8.7-1.8-4.2.2-6.7.8-8.2 1.5zm-56.3 29.3c-2.8 1.3-5.2 3.8-6.3 6.5-.7 1.7-.8 4.2-.8 13.8 0 12 0 11.8 2.3 14.7 1.7 2.1 6 4.8 8.1 5 1.9.2 6-.9 7.9-2.1 2.8-1.8 4.7-4.6 5.2-7.6.3-1.9.5-6.1.3-12.5-.2-9-.4-10-2.3-12.5-1.2-1.5-3.2-3.3-4.5-4-2.9-1.4-7.3-1.8-9.9-.3z"/></svg>',
         x: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
         plus: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
         trash: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>',

@@ -74,7 +74,8 @@ def create_launcher() -> HoodiniLauncher:
                 # Check if hoodini is installed
                 if not check_hoodini_installed():
                     print("🔍 Hoodini not found in PATH. Installing...")
-                    if not install_hoodini():
+                    # Pass the command so we can determine which databases to download
+                    if not install_hoodini(launcher.command):
                         print("\n❌ Installation failed. Please check the errors above.")
                         launcher.status_state = "error"
                         launcher.status_message = "Hoodini installation failed"
