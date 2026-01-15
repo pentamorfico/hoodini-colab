@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import threading
 from pathlib import Path
 
 import anywidget
@@ -35,26 +36,30 @@ class HoodiniLauncher(anywidget.AnyWidget):
     input_list = traitlets.Unicode("").tag(sync=True)
     logs = traitlets.Unicode("").tag(sync=True)
 
-    def keep_alive(self):
-        """Keep the notebook cell running to prevent Colab disconnection.
-        
-        Call this after display(launcher) to keep the cell active while
-        you interact with the widget. This prevents Google Colab from
-        disconnecting when you switch tabs.
-        
+    def keep_alive(self, interval_seconds: int = 30):
+        """Start a background heartbeat to keep Colab alive without blocking UI.
+
+        This runs in a daemon thread so trait callbacks (like the Run button)
+        remain responsive. The notebook cell can finish immediately.
+
         Example:
-            >>> launcher = create_launcher()
-            >>> display(launcher)
-            >>> launcher.keep_alive()  # Keeps cell running
+            launcher = create_launcher()
+            display(launcher)
+            launcher.keep_alive()
         """
-        import time
-        print("\n⏳ Launcher is active - cell will keep running to prevent disconnection")
-        print("   You can stop the cell manually when done using the stop button (⬛)")
-        try:
+
+        def _heartbeat():
+            import time
             while True:
-                time.sleep(60)
-        except KeyboardInterrupt:
-            print("\n✅ Cell stopped by user")
+                time.sleep(interval_seconds)
+                # No-op heartbeat; presence of active thread helps avoid idle drop
+
+        # Avoid spawning multiple heartbeats
+        if hasattr(self, "_keep_alive_thread") and getattr(self, "_keep_alive_thread").is_alive():
+            return
+
+        self._keep_alive_thread = threading.Thread(target=_heartbeat, daemon=True)
+        self._keep_alive_thread.start()
 
 
 def create_launcher() -> HoodiniLauncher:
