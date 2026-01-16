@@ -94,6 +94,23 @@ Neighborhood window parameters determine how much sequence context to include ar
 
 Pairwise comparison settings configure ANI and AAI calculations, while annotation toggles enable tools like PADLOC for antiphage defense systems, DefenseFinder, CCtyper for CRISPR-Cas detection, and many others. Link configuration determines whether to compute protein and nucleotide similarity connections between neighborhoods.
 
+### MetaCerberus Database Selection
+
+When you enable protein domain annotation with MetaCerberus, you can select specific databases to search against. The launcher provides a dropdown menu where you can choose from available databases including:
+
+- **amrfinder**: Antimicrobial resistance genes
+- **cazy**: Carbohydrate-Active enZymes
+- **cog**: Clusters of Orthologous Groups
+- **foam**: Functional Ontology Assignments for Metagenomes
+- **kegg**: KEGG Orthology
+- **kofam**: KEGG Orthology and Links Annotation
+- **pfam**: Protein families
+- **phrog**: Prokaryotic virus Remote Homologous Groups
+- **vog**: Virus Orthologous Groups
+- And many more...
+
+**Important**: The first time you run an analysis with MetaCerberus, the selected databases will be automatically downloaded. This is a one-time process, but larger database selections will take longer to download initially. Choose only the databases relevant to your research question to minimize download time and computational requirements.
+
 ## Development
 
 Setting up a development environment is straightforward. Clone the repository and install it in editable mode with the dev dependencies:

@@ -62,13 +62,13 @@ def check_hoodini_installed() -> bool:
     result = subprocess.run(["which", "hoodini"], capture_output=True, text=True)
     if result.returncode == 0:
         return True
-    
+
     # Check if pixi environment exists and hoodini works there
     if Path("/content/hoodini_env").exists():
         workdir = Path("/content/hoodini_env")
     else:
         workdir = Path.home() / "hoodini_env"
-    
+
     pixi_toml = workdir / "pixi.toml"
     if pixi_toml.exists():
         # Try to run hoodini via pixi
@@ -86,7 +86,7 @@ def check_hoodini_installed() -> bool:
         except Exception:
             os.chdir(original_dir)
             return False
-    
+
     return False
 
 
@@ -103,8 +103,9 @@ def run_cmd(cmd: str, shell: bool = True) -> int:
     process = subprocess.Popen(
         cmd, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
     )
-    for line in iter(process.stdout.readline, ""):
-        print(line, end="")
+    if process.stdout:
+        for line in iter(process.stdout.readline, ""):
+            print(line, end="")
     process.wait()
     return process.returncode
 
@@ -132,7 +133,7 @@ def install_hoodini(command: str = "", launcher=None) -> bool:
     # Check if pixi is installed
     pixi_check = subprocess.run(["which", "pixi"], capture_output=True, text=True)
     pixi_installed = pixi_check.returncode == 0
-    
+
     if not pixi_installed:
         # Install pixi
         print("\n=== Installing pixi ===\n")
@@ -201,6 +202,23 @@ def install_hoodini(command: str = "", launcher=None) -> bool:
     if run_cmd("pixi run hoodini download assembly_summary") != 0:
         print("❌ Failed to download assembly_summary")
         return False
+
+    # Download MetaCerberus databases if needed and specified
+    if "--domains" in command and launcher and hasattr(launcher, 'metacerberus_dbs'):
+        metacerberus_dbs = launcher.metacerberus_dbs.strip()
+        if metacerberus_dbs:
+            if launcher:
+                launcher.status_state = "downloading_databases"
+                launcher.status_message = "Downloading MetaCerberus databases..."
+            print("\n=== Downloading MetaCerberus databases ===\n")
+            metacerberus_cmd = f"pixi run hoodini download metacerberus {metacerberus_dbs}"
+            print(f"Running: {metacerberus_cmd}\n")
+            if run_cmd(metacerberus_cmd) != 0:
+                print("❌ Failed to download MetaCerberus databases")
+                return False
+            print("✅ MetaCerberus databases downloaded successfully\n")
+        else:
+            print("\nℹ️  Domains parameter found but no databases selected. Using defaults or existing databases.\n")
 
     print("\n" + "=" * 60)
     print("✅ Hoodini installation completed successfully!")

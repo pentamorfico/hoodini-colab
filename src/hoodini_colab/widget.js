@@ -171,6 +171,11 @@ function render({ model, el }) {
             const cmd = buildCommand();
             cmdEl.textContent = cmd;
             model.set('command', cmd);
+            
+            // Sync MetaCerberus databases selection
+            const selectedDbs = multiSelectState['domains'] || [];
+            model.set('metacerberus_dbs', selectedDbs.join(','));
+            
             model.save_changes();
         }
         updateStatus();

@@ -4,8 +4,8 @@ import io
 import os
 import subprocess
 import threading
-from pathlib import Path
 from contextlib import redirect_stderr, redirect_stdout
+from pathlib import Path
 
 import anywidget
 import traitlets
@@ -38,6 +38,7 @@ class HoodiniLauncher(anywidget.AnyWidget):
     input_list = traitlets.Unicode("").tag(sync=True)
     logs = traitlets.Unicode("").tag(sync=True)
     heartbeat = traitlets.Int(0).tag(sync=True)
+    metacerberus_dbs = traitlets.Unicode("").tag(sync=True)  # Comma-separated list of MetaCerberus DBs
 
     def keep_alive(self, interval_seconds: int = 30):
         """Start a background heartbeat to keep Colab alive without blocking UI.
@@ -58,10 +59,10 @@ class HoodiniLauncher(anywidget.AnyWidget):
                 # No-op heartbeat; presence of active thread helps avoid idle drop
 
         # Avoid spawning multiple heartbeats
-        if hasattr(self, "_keep_alive_thread") and getattr(self, "_keep_alive_thread").is_alive():
+        if hasattr(self, "_keep_alive_thread") and self._keep_alive_thread.is_alive():
             return
 
-        self._keep_alive_thread = threading.Thread(target=_heartbeat, daemon=True)
+        self._keep_alive_thread: threading.Thread = threading.Thread(target=_heartbeat, daemon=True)
         self._keep_alive_thread.start()
 
 
@@ -122,7 +123,7 @@ def create_launcher() -> HoodiniLauncher:
                         launcher.status_message = "Mounting Google Drive..."
                         append_log("🔍 Mounting Google Drive...\n")
                         try:
-                            from google.colab import drive
+                            from google.colab import drive  # type: ignore[import-untyped]
                             gdrive_mount_path = '/content/drive'
                             drive.mount(gdrive_mount_path)
                             append_log("✅ Google Drive mounted successfully at /content/drive/MyDrive\n\n")
@@ -138,7 +139,7 @@ def create_launcher() -> HoodiniLauncher:
                     # First, check if launcher packages are installed
                     if not check_launcher_packages():
                         launcher.status_state = "installing_launcher"
-                        launcher.status_message = "Installing launcher dependencies..."
+                        launcher.status_message = "Downloading and installing pixi"
                         append_log("🔍 Launcher dependencies not found. Installing...\n")
                         if not install_launcher_packages():
                             append_log("❌ Failed to install launcher dependencies.\n")
@@ -151,7 +152,7 @@ def create_launcher() -> HoodiniLauncher:
                     # Check if hoodini is installed
                     if not check_hoodini_installed():
                         launcher.status_state = "installing_hoodini"
-                        launcher.status_message = "Installing Hoodini and downloading databases..."
+                        launcher.status_message = "Installing environment and downloading databases"
                         append_log("🔍 Hoodini not found in PATH. Installing...\n")
                         # Pass the command so we can determine which databases to download
                         if not install_hoodini(launcher.command, launcher):
@@ -159,19 +160,12 @@ def create_launcher() -> HoodiniLauncher:
                             launcher.status_state = "error"
                             launcher.status_message = "Hoodini installation failed"
                             return
+                        append_log("✅ Hoodini installation completed\n\n")
                     else:
                         append_log("✅ Hoodini is already installed\n\n")
 
-                # Run the command
-                launcher.status_state = "running"
-                launcher.status_message = "Executing Hoodini analysis..."
-                
-                # Force update to ensure UI reflects the state change
-                import time
-                time.sleep(0.1)
-
                 cmd = launcher.command
-                
+
                 # Handle input list mode - save to file if input_list is provided
                 if launcher.input_list.strip():
                     # Create temporary file with the input list
@@ -192,9 +186,13 @@ def create_launcher() -> HoodiniLauncher:
                         launcher.status_state = "error"
                         launcher.status_message = "Failed to save input list"
                         return
-                
+
                 append_log(f"🚀 Running: {cmd}\n")
                 append_log("=" * 60 + "\n")
+
+                # Update status to show analysis is running
+                launcher.status_state = "running"
+                launcher.status_message = "Running Hoodini analysis"
 
                 # If we installed via pixi, use pixi run
                 hoodini_env_path = (
@@ -215,30 +213,41 @@ def create_launcher() -> HoodiniLauncher:
                     stderr=subprocess.STDOUT,
                     text=True,
                 )
-                for line in process.stdout:
-                    append_log(line)
+                if process.stdout:
+                    for line in process.stdout:
+                        append_log(line)
                 process.wait()
 
                 if process.returncode == 0:
                     append_log("\n" + "=" * 60 + "\n")
                     append_log("✅ Hoodini analysis completed successfully!\n")
                     append_log("=" * 60 + "\n")
-                    
+
                     # Try to read the HTML visualization
                     output_folder = launcher.command.split('--output ')[-1].split()[0] if '--output' in launcher.command else 'results'
                     html_path = Path(output_folder) / 'hoodini-viz' / 'hoodini-viz.html'
-                    
+
                     if html_path.exists():
                         try:
-                            with open(html_path, 'r') as f:
+                            with open(html_path) as f:
                                 html_content = f.read()
                             launcher.html_output = html_content
-                            append_log(f"📊 Interactive visualization ready: {html_path}\n\n")
+                            append_log(f"📊 Interactive visualization ready: {html_path}\n")
+
+                            # Auto-download HTML in Google Colab
+                            try:
+                                from google.colab import files
+                                files.download(str(html_path))
+                                append_log("⬇️  HTML download triggered automatically\n\n")
+                            except ImportError:
+                                append_log("ℹ️  Auto-download only available in Google Colab\n\n")
+                            except Exception as e:
+                                append_log(f"⚠️  Could not auto-download HTML: {e}\n\n")
                         except Exception as e:
                             append_log(f"⚠️  Could not read HTML visualization: {e}\n")
                     else:
                         append_log(f"ℹ️  HTML visualization not found at {html_path}\n")
-                    
+
                     launcher.status_state = "finished"
                     launcher.status_message = "Check output below"
                 else:
