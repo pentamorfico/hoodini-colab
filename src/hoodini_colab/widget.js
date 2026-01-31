@@ -32,7 +32,7 @@ function render({ model, el }) {
         ],
         'Pairwise Comparisons': [
             { name: 'ani-mode', type: 'select', label: 'ANI Mode', desc: 'ANI calculation method', options: ['fastani', 'skani', 'blastn'], def: 'fastani' },
-            { name: 'nt-aln-mode', type: 'select', label: 'NT Alignment', desc: 'Nucleotide alignment mode', options: ['blastn', 'fastani', 'minimap2'], def: 'blastn' },
+            { name: 'nt-aln-mode', type: 'select', label: 'NT Alignment', desc: 'Nucleotide alignment mode', options: ['blastn', 'fastani', 'minimap2', 'intergenic_blastn'], def: 'blastn' },
             { name: 'aai-mode', type: 'select', label: 'AAI Mode', desc: 'AAI/proteome similarity mode', options: ['aai', 'wgrr'], def: 'wgrr' },
             { name: 'aai-subset-mode', type: 'select', label: 'AAI Subset', desc: 'AAI subset mode', options: ['target_prot', 'target_region', 'window'], def: 'target_region' },
             { name: 'min-pident', type: 'float', label: 'Min % Identity', desc: 'Min percent identity', def: 30.0 }
@@ -41,7 +41,7 @@ function render({ model, el }) {
             { name: 'padloc', type: 'bool', label: 'PADLOC', desc: 'Antiphage defense' },
             { name: 'deffinder', type: 'bool', label: 'DefenseFinder', desc: 'Antiphage defense' },
             { name: 'cctyper', type: 'bool', label: 'CCtyper', desc: 'CRISPR-Cas prediction' },
-            { name: 'ncrna', type: 'bool', label: 'ncRNA', desc: 'Run Infernal for ncRNA prediction' },
+            { name: 'ncrna', type: 'text', label: 'ncRNA (RFAM)', desc: 'Comma-separated RFAM IDs (e.g., RF00001,RF02348)', placeholder: 'RF00001,RF02348' },
             { name: 'genomad', type: 'bool', label: 'geNomad', desc: 'MGE identification' },
             { name: 'sorfs', type: 'bool', label: 'sORFs', desc: 'Reannotate small open reading frames' },
             { name: 'emapper', type: 'bool', label: 'eggNOG-mapper', desc: 'Run eggNOG-mapper to annotate proteins' },
@@ -485,7 +485,7 @@ function render({ model, el }) {
                     input.className = 'param-input';
                     input.type = (param.type === 'int' || param.type === 'float') ? 'number' : 'text';
                     if (param.type === 'float') input.step = '0.001';
-                    input.placeholder = param.def !== undefined ? 'Default: ' + param.def : 'Enter ' + param.label.toLowerCase();
+                    input.placeholder = param.placeholder || (param.def !== undefined ? 'Default: ' + param.def : 'Enter ' + param.label.toLowerCase());
                     if (state[param.name] !== undefined) {
                         input.value = state[param.name];
                     } else if (param.def !== undefined) {
