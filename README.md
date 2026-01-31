@@ -1,8 +1,16 @@
-# <img src="assets/images/hoodini_logo.svg" alt="Hoodini Logo" height="40" align="center"> hoodini-colab [![PyPI](https://img.shields.io/pypi/v/hoodini-colab?cacheSeconds=300)](https://pypi.org/project/hoodini-colab/) [![Python](https://img.shields.io/pypi/pyversions/hoodini-colab?cacheSeconds=300)](https://pypi.org/project/hoodini-colab/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pentamorfico/hoodini-colab/blob/main/hoodini_colab.ipynb)
+# <img src="assets/images/hoodini_logo.svg" alt="Hoodini Logo" height="40" align="center"> hoodini-colab [![PyPI](https://img.shields.io/pypi/v/hoodini-colab?cacheSeconds=300)](https://pypi.org/project/hoodini-colab/) [![Python](https://img.shields.io/pypi/pyversions/hoodini-colab?cacheSeconds=300)](https://pypi.org/project/hoodini-colab/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pentamorfico/hoodini-colab/blob/main/hoodini_colab.ipynb) [![Documentation](https://img.shields.io/badge/docs-hoodini.bio-blue)](https://hoodini.bio/docs/colab)
 
 Interactive parameter configurator for the Hoodini CLI genomic neighborhood analysis tool. **Designed for Google Colab** to run genomic analyses in the cloud without any local installation.
 
 ![Hoodini Colab Launcher Interface](assets/images/screenshot.png)
+
+## 📖 Documentation
+
+**Full documentation available at [hoodini.bio/docs/colab](https://hoodini.bio/docs/colab)**
+
+- [Quick Start Guide](https://hoodini.bio/docs/colab/quickstart)
+- [Use Cases](https://hoodini.bio/docs/colab/use-cases)
+- [API Reference](https://hoodini.bio/docs/colab/api/reference)
 
 ## What is this?
 
@@ -94,23 +102,6 @@ Neighborhood window parameters determine how much sequence context to include ar
 
 Pairwise comparison settings configure ANI and AAI calculations, while annotation toggles enable tools like PADLOC for antiphage defense systems, DefenseFinder, CCtyper for CRISPR-Cas detection, and many others. Link configuration determines whether to compute protein and nucleotide similarity connections between neighborhoods.
 
-### MetaCerberus Database Selection
-
-When you enable protein domain annotation with MetaCerberus, you can select specific databases to search against. The launcher provides a dropdown menu where you can choose from available databases including:
-
-- **amrfinder**: Antimicrobial resistance genes
-- **cazy**: Carbohydrate-Active enZymes
-- **cog**: Clusters of Orthologous Groups
-- **foam**: Functional Ontology Assignments for Metagenomes
-- **kegg**: KEGG Orthology
-- **kofam**: KEGG Orthology and Links Annotation
-- **pfam**: Protein families
-- **phrog**: Prokaryotic virus Remote Homologous Groups
-- **vog**: Virus Orthologous Groups
-- And many more...
-
-**Important**: The first time you run an analysis with MetaCerberus, the selected databases will be automatically downloaded. This is a one-time process, but larger database selections will take longer to download initially. Choose only the databases relevant to your research question to minimize download time and computational requirements.
-
 ## Development
 
 Setting up a development environment is straightforward. Clone the repository and install it in editable mode with the dev dependencies:
@@ -149,15 +140,13 @@ Contributions are welcome! Please:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+The project follows standard Python development practices with ruff for code style and mypy for type checking.
+
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Contributing
-
-Contributions are welcome! If you find a bug, have a feature request, or want to improve the code, please open an issue on GitHub or submit a pull request. The project follows standard Python development practices with ruff for code style and mypy for type checking.
-
 ## Acknowledgments
 
-This project is built on top of anywidget, a modern framework for creating interactive Jupyter widgets with a great developer experience. The configuration system uses traitlets, which provides a robust way to handle typed attributes and callbacks. The launcher integrates seamlessly with Hoodini's pixi-based installation system to provide a smooth user experience.
+This project is built on top of [anywidget](https://anywidget.dev/), a modern framework for creating interactive Jupyter widgets. The configuration system uses [traitlets](https://traitlets.readthedocs.io/), which provides a robust way to handle typed attributes and callbacks.
 

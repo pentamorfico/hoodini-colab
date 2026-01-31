@@ -1,0 +1,18 @@
+loaders:
+  - type: python
+    search_path: ["src"]
+    packages: ["hoodini_colab"]
+
+processors:
+  - type: filter
+    documented_only: true
+    exclude_special: true
+    exclude_private: true
+    skip_empty_modules: true
+  - type: smart
+  - type: crossref
+
+renderer:
+  type: markdown
+  filename: "docs/api/reference.md"
+  render_toc: false
