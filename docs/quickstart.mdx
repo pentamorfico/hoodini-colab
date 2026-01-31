@@ -1,0 +1,147 @@
+---
+title: Quick Start
+description: Step-by-step guide to running your first analysis with Hoodini Colab
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components'
+
+# Quick Start
+
+This guide walks you through running your first genomic neighborhood analysis using Hoodini Colab in Google Colab.
+
+## Prerequisites
+
+All you need is:
+- A Google account (for Google Colab)
+- A web browser
+- NCBI protein or nucleotide IDs to analyze
+
+<Callout type="info">
+  No local installation required! Everything runs in the cloud.
+</Callout>
+
+## Your First Analysis
+
+<Steps>
+
+### Open Google Colab
+
+Click the badge below to open the pre-configured notebook:
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pentamorfico/hoodini-colab/blob/main/hoodini_colab.ipynb)
+
+### Install the Package
+
+Run the first cell to install hoodini-colab:
+
+```python
+!pip install -q hoodini-colab
+```
+
+This takes about 10-15 seconds.
+
+### Launch the Widget
+
+Run the second cell to display the interactive launcher:
+
+```python
+from hoodini_colab import create_launcher
+
+launcher = create_launcher()
+display(launcher)
+```
+
+You'll see the Hoodini Colab interface with collapsible configuration sections.
+
+### Configure Your Input
+
+In the **Input** section:
+
+1. Select your input mode:
+   - **Single Input** — Enter a single NCBI protein ID (e.g., `WP_012345678.1`)
+   - **Input List** — Paste multiple IDs, one per line
+   - **Input Sheet** — Provide a table with coordinates and assembly info
+
+2. Enter your protein or nucleotide ID(s)
+
+3. Set the output directory (default: `hoodini_output`)
+
+### Choose Annotation Tools (Optional)
+
+Expand the **Annotations** section and toggle the tools you want:
+
+- **PADLOC** — Antiphage defense systems
+- **DefenseFinder** — Defense system detection
+- **CCtyper** — CRISPR-Cas systems
+- **geNomad** — Mobile genetic elements
+- **eggNOG** — Functional annotations
+
+<Callout type="warning">
+  Each annotation tool requires downloading its database on first use. Enable only the tools you need to minimize setup time.
+</Callout>
+
+### Run the Analysis
+
+Click **"Run Hoodini Analysis"** at the bottom of the widget.
+
+The widget will:
+1. Install Hoodini via pixi (first run only, ~3-5 min)
+2. Download required databases (first run only, ~2-5 min per tool)
+3. Execute your analysis
+4. Show progress in real-time
+
+### Download Results
+
+When complete, your results will be in the output directory. You can:
+
+- Browse files in the Colab file panel (left sidebar)
+- Download the entire folder as a ZIP
+- Open the interactive HTML visualization directly
+
+</Steps>
+
+## Understanding the Output
+
+After a successful run, you'll find:
+
+| File | Description |
+|------|-------------|
+| `hoodini_viz.html` | Interactive visualization (open in browser) |
+| `neighborhoods.tsv` | Neighborhood data in tabular format |
+| `proteins.faa` | Extracted protein sequences |
+| `tree.nwk` | Phylogenetic tree (if tree-mode enabled) |
+| `annotations/` | Results from annotation tools |
+
+## Example: Analyzing a Defense System
+
+Let's analyze the genomic neighborhoods around a DUF4297-containing protein:
+
+1. In **Input Mode**, select "Single Input"
+2. Enter: `WP_011712265.1`
+3. Enable **PADLOC** and **DefenseFinder** in Annotations
+4. Set **Tree Mode** to `taxonomy_tree`
+5. Click **Run Hoodini Analysis**
+
+This will:
+- Find homologs via remote BLAST
+- Extract their genomic neighborhoods
+- Detect defense systems in each neighborhood
+- Build a taxonomy-based tree
+- Generate an interactive visualization
+
+## Tips for Better Performance
+
+<Callout type="info">
+  **Add an NCBI API key** to increase rate limits and speed up data downloads. Get one free at [NCBI](https://www.ncbi.nlm.nih.gov/account/).
+</Callout>
+
+- **Start small**: Test with a few sequences before running large analyses
+- **Limit annotation tools**: Each tool adds database download time
+- **Use taxonomy trees**: Faster than AAI/ANI-based trees for large datasets
+- **Reuse sessions**: Keep the Colab session open to avoid re-installing Hoodini
+
+## Next Steps
+
+- [Use Cases](/docs/colab/use-cases) — Common analysis scenarios
+- [API Reference](/docs/colab/api/reference) — Programmatic access
+- [Hoodini CLI](/docs/hoodini) — Full CLI documentation

@@ -1,0 +1,101 @@
+---
+title: Hoodini Colab
+description: Interactive parameter configurator for Hoodini in Google Colab
+---
+
+import { Callout, Cards, Steps } from 'nextra/components'
+
+# Hoodini Colab
+
+Hoodini Colab is an interactive Jupyter widget that provides a visual interface for configuring and running Hoodini analyses. **Designed specifically for Google Colab**, it allows researchers to run complex genomic neighborhood analyses directly in their browser without any local installation.
+
+<Callout type="info">
+  **No installation required!** Just open the notebook in Google Colab and start analyzing.
+</Callout>
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pentamorfico/hoodini-colab/blob/main/hoodini_colab.ipynb)
+
+## Why Hoodini Colab?
+
+Instead of remembering dozens of command-line parameters and flags, you get a visual interface where you can click, select, and configure everything through an intuitive web-based UI.
+
+<Cards>
+  <Cards.Card title="🚀 Zero Setup" href="#quick-start" />
+  <Cards.Card title="🎛️ Visual Configuration" href="#key-features" />
+  <Cards.Card title="⚙️ Smart Defaults" href="#key-features" />
+</Cards>
+
+## Quick Start
+
+<Steps>
+
+### Open the Colab Notebook
+
+Click the button below to open the interactive notebook in Google Colab:
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pentamorfico/hoodini-colab/blob/main/hoodini_colab.ipynb)
+
+### Run the Setup Cell
+
+Run the cell below **only once**. Running it multiple times may cause errors!
+
+```python
+!pip install -q hoodini-colab
+from hoodini_colab import create_launcher
+launcher = create_launcher()
+display(launcher)
+```
+
+### Configure and Run
+
+Use the visual interface to configure your analysis, then click **"Run Hoodini Analysis"**.
+
+</Steps>
+
+<Callout type="warning">
+  **First run takes 5-10 minutes**: The first time you run Hoodini, it needs to install the tool and download reference databases. More annotation tools selected means more databases to download. Subsequent runs in the same session are much faster.
+</Callout>
+
+## Key Features
+
+The launcher interface is organized into collapsible sections covering all aspects of Hoodini's functionality:
+
+| Section | Description |
+|---------|-------------|
+| **Input/Output** | Configure file paths and output directories |
+| **Remote BLAST** | E-values and number of targets for database searches |
+| **Performance** | Thread count and NCBI API keys |
+| **Neighborhood** | Window sizes around target proteins |
+| **Clustering** | Sequence grouping methods and thresholds |
+| **Tree Construction** | Taxonomy, NJ, ML, or distance-based trees |
+| **Annotations** | PADLOC, DefenseFinder, CCtyper, geNomad, and more |
+| **Links** | Protein and nucleotide similarity connections |
+
+Every parameter shows helpful descriptions explaining what it does. The generated command updates instantly as you make changes, and you can copy it to run manually later or click "Run" to execute immediately.
+
+## Local Installation
+
+While optimized for Google Colab, you can also use hoodini-colab in local Jupyter notebooks:
+
+```bash
+pip install hoodini-colab
+```
+
+Then in your notebook:
+
+```python
+from hoodini_colab import create_launcher
+
+launcher = create_launcher()
+display(launcher)
+```
+
+<Callout>
+  When running locally, you still need Hoodini installed. The widget will attempt to install it via pixi if not found.
+</Callout>
+
+## Next Steps
+
+- [Quick Start Guide](/docs/colab/quickstart) — Step-by-step tutorial
+- [Use Cases](/docs/colab/use-cases) — Common analysis scenarios
+- [API Reference](/docs/colab/api/reference) — Programmatic access to the widget

@@ -1,0 +1,9 @@
+{
+  "index": "Overview",
+  "quickstart": "Quick Start",
+  "use-cases": "Use Cases",
+  "api": {
+    "title": "API Reference",
+    "type": "page"
+  }
+}
