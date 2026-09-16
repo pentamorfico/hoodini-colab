@@ -152,7 +152,7 @@ def install_hoodini(command: str = "", launcher=None) -> bool:
 
         # Download environment.yml
         print("\n=== Downloading environment.yml ===\n")
-        if run_cmd("wget -O environment.yml https://storage.hoodini.bio/environment.yml") != 0:
+        if run_cmd("wget -O environment.yml https://raw.githubusercontent.com/pentamorfico/hoodini/main/environment.yml") != 0:
             print("❌ Failed to download environment.yml")
             return False
 
